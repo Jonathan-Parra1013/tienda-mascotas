@@ -1,0 +1,56 @@
+{% comment %}
+  Template: search.liquid
+  Página de resultados de búsqueda para Cuppets
+{% endcomment %}
+
+{% render 'breadcrumbs' %}
+
+<div class="container section-padding">
+  <div class="search-header text-center" style="margin-bottom: 40px;">
+    <h1 style="font-family: var(--font-display); font-size: 2.2rem; color: var(--primary-dark); margin-bottom: 12px;">
+      {% if search.performed %}
+        Resultados para "<span style="color: var(--primary);">{{ search.terms }}</span>"
+      {% else %}
+        Buscar en Cuppets
+      {% endif %}
+    </h1>
+    {% if search.performed %}
+      <p style="color: var(--text-muted);">
+        Se encontraron <strong>{{ search.results_count }}</strong> resultado(s)
+      </p>
+    {% endif %}
+  </div>
+
+  {% if search.performed %}
+    {% paginate search.results by 12 %}
+      {% if search.results_count == 0 %}
+        <div class="text-center" style="padding: 60px 20px; background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); max-width: 500px; margin: 0 auto;">
+          <div style="font-size: 3rem; margin-bottom: 16px;">🐾</div>
+          <h2 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 8px;">
+            No encontramos coincidencias
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
+            Intenta con palabras clave más generales como "collar", "placa", "arnés" o "perro".
+          </p>
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
+            Explorar Todo el Catálogo
+          </a>
+        </div>
+      {% else %}
+        <div class="products-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;">
+          {% for item in search.results %}
+            {% if item.object_type == 'product' %}
+              {% render 'product-card', product: item %}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <div class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 48px;">
+            {{ paginate | default_pagination }}
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endpaginate %}
+  {% endif %}
+</div>

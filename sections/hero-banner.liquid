@@ -1,0 +1,97 @@
+<div class="hero-banner">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left Column: Copy & Actions -->
+      <div class="hero-text-side">
+        <div class="hero-badge">
+          <i class="fa-solid fa-heart" style="color: var(--brand-purple);"></i> {{ section.settings.hero_badge | default: 'TODO PARA CONSENTIR A TU MEJOR AMIGO' }}
+        </div>
+        <h1 class="hero-title">
+          {{ section.settings.hero_title | default: 'El Mejor Cuidado & Confort para tus' }} 
+          <span class="gradient-text">Peluditos</span>
+        </h1>
+        <p class="hero-description">
+          {{ section.settings.hero_subtext | default: 'Accesorios ergonómicos de alta calidad, collares suaves, arneses anti-tirones y camas de máximo confort diseñadas con amor para perros y gatos.' }}
+        </p>
+        
+        <div class="hero-cta-group">
+          <a href="/collections/all" class="btn btn-purple btn-lg">
+            Explorar Catálogo <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="/collections/perros" class="btn btn-outline-purple btn-lg">
+            🐶 Para Perros
+          </a>
+          <a href="/collections/gatos" class="btn btn-outline-purple btn-lg">
+            🐱 Para Gatos
+          </a>
+        </div>
+
+        <div class="hero-trust-metrics">
+          <div class="metric-item">
+            <span class="metric-num">15.000+</span>
+            <span class="metric-label">Peluditos Felices</span>
+          </div>
+          <div class="metric-sep"></div>
+          <div class="metric-item">
+            <span class="metric-num" style="color: #F59E0B;">4.9 ★★★★★</span>
+            <span class="metric-label">Valoración Clientes</span>
+          </div>
+          <div class="metric-sep"></div>
+          <div class="metric-item">
+            <span class="metric-num">100%</span>
+            <span class="metric-label">Garantía Cuppets</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Official Mascot Visual Card -->
+      <div class="hero-visual-side">
+        <div class="hero-mascot-card">
+          <img src="{{ 'cuppets-logo.png' | asset_url }}" alt="Cuppets Perrito y Gatito" class="hero-mascot-img" loading="eager">
+          
+          <div class="hero-card-floating float-top">
+            <div class="floating-icon"><i class="fa-solid fa-paw"></i></div>
+            <div>
+              <strong>Calidad Certificada</strong>
+              <p>Textiles acolchados y suaves</p>
+            </div>
+          </div>
+
+          <div class="hero-card-floating float-bottom">
+            <div class="floating-icon icon-cyan"><i class="fa-solid fa-truck-fast"></i></div>
+            <div>
+              <strong>Envíos a Toda Colombia</strong>
+              <p>Despacho seguro en 24-48h</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner Principal",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Etiqueta superior",
+      "default": "TODO PARA CONSENTIR A TU MEJOR AMIGO"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título principal H1",
+      "default": "El Mejor Cuidado & Confort para tus"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtext",
+      "label": "Descripción corta",
+      "default": "Accesorios ergonómicos de alta calidad, collares suaves, arneses anti-tirones y camas de máximo confort."
+    }
+  ]
+}
+{% endschema %}

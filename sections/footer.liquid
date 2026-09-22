@@ -1,0 +1,152 @@
+<footer class="main-footer" id="site-footer">
+  <div class="container">
+
+    <!-- Newsletter / CTA Strip -->
+    <div class="footer-newsletter-strip">
+      <div class="footer-newsletter-label">
+        <i class="fa-solid fa-paw"></i>
+        ÚNETE A LA FAMILIA CUPPETS
+        <i class="fa-solid fa-paw"></i>
+      </div>
+      <h2 class="footer-newsletter-title">Ofertas exclusivas para tu mejor amigo</h2>
+      <p class="footer-newsletter-sub">Suscríbete y recibe descuentos, novedades y tips de cuidado pet.</p>
+      <form class="footer-newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+        <input
+          type="email"
+          class="footer-newsletter-input"
+          placeholder="Tu correo electrónico..."
+          aria-label="Correo electrónico"
+          required
+        >
+        <button type="submit" class="footer-newsletter-btn">
+          <i class="fa-solid fa-arrow-right"></i> Suscribirme
+        </button>
+      </form>
+    </div>
+
+    <!-- Main 4-Column Grid -->
+    <div class="footer-columns-grid">
+
+      <!-- Col 1: Brand & Slogan -->
+      <div class="footer-col brand-col">
+        <a href="/" class="brand-logo footer-logo-link" style="display: inline-flex; align-items: center; gap: 10px;">
+          <img src="{{ 'cuppets-logo.png' | asset_url }}" alt="Cuppets Logo" style="height: 50px; width: auto; border-radius: 12px; padding: 4px; background: rgba(255,255,255,0.05);">
+          <div class="brand-title-split" style="font-size: 1.45rem;">
+            <span class="cup" style="color: white;">Cup</span><span class="pets" style="color: var(--brand-purple-light);">pets</span>
+          </div>
+        </a>
+        <p class="brand-desc-footer">
+          Accesorios premium para perros y gatos. Materiales ergonómicos, acolchados y duraderos con garantía de satisfacción.
+        </p>
+        <!-- Mascots row -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: #64748B; font-size: 0.82rem;">
+          <i class="fa-solid fa-dog" style="color: var(--brand-honey); font-size: 1.2rem;"></i>
+          <span>Perros</span>
+          <span style="color: #334155;">·</span>
+          <i class="fa-solid fa-cat" style="color: var(--brand-purple-light); font-size: 1.2rem;"></i>
+          <span>Gatos</span>
+        </div>
+        <!-- Social -->
+        <div class="footer-social-row">
+          <a href="https://wa.me/{{ settings.whatsapp_number | default: '573009876543' }}" target="_blank" aria-label="WhatsApp" class="social-wa">
+            <i class="fa-brands fa-whatsapp"></i>
+          </a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Catálogo Links -->
+      <div class="footer-col">
+        <h4 class="footer-heading-underlined">Catálogo</h4>
+        <ul class="footer-links-list">
+          <li><a href="/collections/all"><i class="fa-solid fa-border-all" style="color: var(--brand-purple); font-size:0.75rem;"></i> Catálogo Completo</a></li>
+          <li><a href="/collections/collares"><i class="fa-solid fa-tag" style="color: var(--brand-honey); font-size:0.75rem;"></i> Collares &amp; Pecheras</a></li>
+          <li><a href="/collections/arneses"><i class="fa-solid fa-vest" style="color: var(--brand-honey); font-size:0.75rem;"></i> Arneses Ergonómicos</a></li>
+          <li><a href="/collections/correas"><i class="fa-solid fa-link" style="color: var(--brand-honey); font-size:0.75rem;"></i> Correas de Paseo</a></li>
+          <li><a href="/collections/camas"><i class="fa-solid fa-bed" style="color: var(--brand-honey); font-size:0.75rem;"></i> Camas &amp; Descanso</a></li>
+          <li><a href="/account"><i class="fa-regular fa-user" style="color: var(--brand-purple); font-size:0.75rem;"></i> Mi Cuenta / Pedidos</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Contacto & Atención -->
+      <div class="footer-col">
+        <h4 class="footer-heading-underlined">Contacto</h4>
+        <div class="footer-contact-items">
+          <div class="contact-card-row">
+            <div class="contact-card-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>
+              <span class="contact-card-label">WhatsApp Oficial</span>
+              <a href="https://wa.me/{{ settings.whatsapp_number | default: '573009876543' }}" target="_blank" class="contact-card-val text-accent-green" style="display:block;">+57 300 987 6543</a>
+            </div>
+          </div>
+          <div class="contact-card-row">
+            <div class="contact-card-icon"><i class="fa-regular fa-envelope"></i></div>
+            <div>
+              <span class="contact-card-label">Correo Electrónico</span>
+              <span class="contact-card-val" style="display:block;">contacto@cuppets.com</span>
+            </div>
+          </div>
+          <div class="contact-card-row">
+            <div class="contact-card-icon"><i class="fa-solid fa-truck-fast"></i></div>
+            <div>
+              <span class="contact-card-label">Envíos</span>
+              <strong style="color: white; font-size: 0.88rem; display:block;">Todo Colombia</strong>
+              <span style="font-size: 0.78rem; color: #475569;">Servientrega · Envía · Interrapidísimo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 4: Métodos de Pago -->
+      <div class="footer-col">
+        <h4 class="footer-heading-underlined">Métodos de Pago</h4>
+        <div class="payment-methods-card-box">
+          <span class="payment-box-title">100% Seguro &amp; Confiable</span>
+          <div class="payment-badges-flex">
+            <span class="pay-badge badge-pse">PSE</span>
+            <span class="pay-badge">Tarjeta</span>
+          </div>
+          <div class="payment-badges-flex" style="margin-top: 8px;">
+            <span class="pay-badge badge-nequi">Nequi / Bancolombia</span>
+          </div>
+          <div class="payment-badges-flex" style="margin-top: 8px;">
+            <span class="pay-badge badge-contraentrega">Contra Entrega</span>
+          </div>
+          <p class="payment-box-desc">
+            Paga en línea o solicita pago contra entrega y paga al recibir en tu puerta.
+          </p>
+        </div>
+        <div class="colombia-coverage-badge">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Cobertura 100% Colombia</span>
+        </div>
+      </div>
+
+    </div><!-- end footer-columns-grid -->
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom-bar">
+      <p>© {{ 'now' | date: "%Y" }} <strong style="color: #64748B;">CUPPETS</strong>. Todos los derechos reservados.</p>
+      <div class="footer-legal-links">
+        <a href="/pages/sobre-nosotros">Políticas de Envío</a>
+        <a href="/pages/sobre-nosotros">Guía de Tallas</a>
+        <a href="/pages/sobre-nosotros">Términos y Condiciones</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Pie de Página",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Pie de Página"
+    }
+  ]
+}
+{% endschema %}

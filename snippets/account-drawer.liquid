@@ -1,0 +1,99 @@
+<!-- Shopify Native Customer Login & Account Drawer -->
+<div class="drawer-backdrop" id="account-drawer-backdrop" onclick="closeAccountDrawer()"></div>
+
+<aside class="account-drawer-modal" id="account-drawer">
+  <!-- Modal Header -->
+  <div class="account-modal-header">
+    <h2 class="account-modal-title">
+      {% if customer %}MI CUENTA CUPPETS{% else %}INICIAR SESIÓN O CREAR CUENTA{% endif %}
+    </h2>
+    <button type="button" class="account-modal-close" onclick="closeAccountDrawer()" aria-label="Cerrar modal">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="account-modal-body">
+    {% if customer %}
+      <!-- Logged In Customer View -->
+      <div class="account-logged-view">
+        <div class="customer-avatar-badge">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+        <h3 class="customer-name-heading">Hola, {{ customer.first_name }}!</h3>
+        <p class="customer-email-text">{{ customer.email }}</p>
+
+        <div class="account-quick-cards-grid" style="margin-top: 24px; margin-bottom: 20px;">
+          <a href="{{ routes.account_url }}" class="account-quick-card">
+            <i class="fa-solid fa-box-archive"></i>
+            <span>Pedidos</span>
+          </a>
+          <a href="{{ routes.account_addresses_url }}" class="account-quick-card">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Direcciones</span>
+          </a>
+        </div>
+
+        <a href="{{ routes.account_logout_url }}" class="btn btn-outline-purple" style="width: 100%; justify-content: center;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+        </a>
+      </div>
+
+    {% else %}
+      <!-- Guest / Login Form View (Matches Shopify Native Shop Pay & Email Flow) -->
+      
+      <!-- 1. Shop Pay / Iniciar Sesión con Shop Button -->
+      <div class="shop-pay-login-box">
+        <a href="{{ routes.account_login_url }}" class="btn-shop-pay">
+          <span>Iniciar sesión con <strong>shop</strong></span>
+        </a>
+      </div>
+
+      <!-- Divider with 'o' -->
+      <div class="account-divider-row">
+        <div class="divider-line"></div>
+        <span class="divider-circle">o</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- 2. Shopify Native Customer Login Form -->
+      {% form 'customer_login', class: 'shopify-customer-login-form' %}
+        <div class="email-input-with-arrow">
+          <input 
+            type="email" 
+            name="customer[email]" 
+            id="CustomerEmail" 
+            placeholder="Correo electrónico" 
+            required 
+            autocomplete="email"
+          >
+          <button type="submit" class="email-submit-arrow-btn" aria-label="Continuar">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="account-checkbox-row">
+          <label class="custom-checkbox-container">
+            <input type="checkbox" name="customer[accepts_marketing]" value="true" checked>
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Enviarme novedades y ofertas por correo electrónico</span>
+          </label>
+        </div>
+      {% endform %}
+
+      <div class="account-separator-line"></div>
+
+      <!-- 3. Bottom Quick Navigation Cards (Pedidos & Perfil) -->
+      <div class="account-quick-cards-grid">
+        <a href="{{ routes.account_url }}" class="account-quick-card">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>Pedidos</span>
+        </a>
+        <a href="{{ routes.account_login_url }}" class="account-quick-card">
+          <i class="fa-regular fa-user"></i>
+          <span>Perfil</span>
+        </a>
+      </div>
+
+    {% endif %}
+  </div>
+</aside>

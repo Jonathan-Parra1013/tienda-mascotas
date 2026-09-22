@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#5C3BFF">
+
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <title>
+    {{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  {% render 'meta-tags' %}
+
+  {{ 'cuppets.css' | asset_url | stylesheet_tag }}
+
+  {{ content_for_header }}
+</head>
+
+<body class="template-{{ template | replace: '.', '-' | handle }}">
+
+  <!-- Header Navigation Section -->
+  {% section 'header' %}
+
+  <!-- Main Dynamic Shopify Content -->
+  <main role="main" id="MainContent" class="main-content">
+    {{ content_for_layout }}
+  </main>
+
+  <!-- Footer Section -->
+  {% section 'footer' %}
+
+  <!-- Global Drawers & Modals -->
+  {% render 'cart-drawer' %}
+  {% render 'search-modal' %}
+  {% render 'account-drawer' %}
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/{{ settings.whatsapp_number | default: '573009876543' }}?text=Hola%20Cuppets!%20Tengo%20una%20consulta%20sobre%20sus%20accesorios" target="_blank" class="whatsapp-float-btn" title="Chatear con Asesor VIP Cuppets">
+    <div class="whatsapp-pulse"></div>
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Theme Scripts -->
+  <script src="{{ 'cart.js' | asset_url }}" defer></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer></script>
+  <script src="{{ 'cuppets.js' | asset_url }}" defer></script>
+
+</body>
+</html>

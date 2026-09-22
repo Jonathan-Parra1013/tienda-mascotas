@@ -1,0 +1,77 @@
+<div class="drawer-backdrop" id="cart-drawer-backdrop" onclick="toggleCartDrawer()"></div>
+<aside class="cart-drawer" id="cart-drawer">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <i class="fa-solid fa-basket-shopping" style="color: var(--primary);"></i>
+      <h2>Tu Canasta Cuppets</h2>
+    </div>
+    <button type="button" class="drawer-close-btn" onclick="toggleCartDrawer()" aria-label="Cerrar canasta">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Dynamic Free Shipping Progress Bar -->
+  <div class="free-shipping-bar-box">
+    <div class="free-shipping-text" id="free-shipping-text">
+      Faltan <strong>${{ settings.free_shipping_threshold | default: '99.000' }}</strong> para <strong>¡ENVÍO GRATIS!</strong>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="shipping-progress-fill" style="width: 0%;"></div>
+    </div>
+  </div>
+
+  <!-- Cart Items List -->
+  <div class="cart-drawer-items" id="cart-items-container">
+    {% if cart.item_count > 0 %}
+      {% for item in cart.items %}
+        {% render 'cart-item', item: item %}
+      {% endfor %}
+    {% else %}
+      <div class="cart-empty-state">
+        <div class="empty-icon"><i class="fa-solid fa-paw"></i></div>
+        <h3>Tu canasta está vacía</h3>
+        <p>Explora nuestros accesorios exclusivos para tu peludito.</p>
+        <a href="/collections/all" class="btn btn-purple btn-sm" onclick="toggleCartDrawer()" style="margin-top: 14px;">
+          Ver Catálogo
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Drawer Footer -->
+  <div class="drawer-footer">
+    <div class="promo-input-row">
+      <input type="text" id="cart-promo-code" placeholder="Código (ej: CUPPETS15)">
+      <button type="button" class="btn btn-purple btn-sm" onclick="applyPromoCode()">Aplicar</button>
+    </div>
+
+    <div class="cart-totals-summary">
+      <div class="summary-line">
+        <span>Subtotal</span>
+        <span id="cart-subtotal-val">${{ cart.total_price | money_without_currency }} COP</span>
+      </div>
+      <div class="summary-line discount-line" id="cart-discount-line" style="display: none;">
+        <span>Descuento VIP (15%)</span>
+        <span id="cart-discount-val" style="color: #10B981; font-weight: 700;">-$0 COP</span>
+      </div>
+      <div class="summary-line">
+        <span>Envío estimado</span>
+        <span id="cart-shipping-val">Calculando...</span>
+      </div>
+      <hr class="summary-hr">
+      <div class="summary-line total-line">
+        <strong>Total Estimado</strong>
+        <strong id="cart-total-val" class="total-amount-purple">${{ cart.total_price | money_without_currency }} COP</strong>
+      </div>
+    </div>
+
+    <div class="cart-checkout-btns">
+      <a href="/checkout" class="btn btn-purple btn-block btn-lg" style="width: 100%; justify-content: center;">
+        <i class="fa-solid fa-lock"></i> Finalizar Compra Web
+      </a>
+      <button type="button" class="btn btn-whatsapp-link btn-block" onclick="checkoutViaWhatsApp()" style="width: 100%; justify-content: center; margin-top: 8px;">
+        <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp Directo
+      </button>
+    </div>
+  </div>
+</aside>

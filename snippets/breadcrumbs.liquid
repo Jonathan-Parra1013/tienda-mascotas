@@ -1,0 +1,64 @@
+{% comment %}
+  Snippet: breadcrumbs.liquid
+  Ruta de navegación interactiva y accesible para Cuppets
+{% endcomment %}
+
+{% unless template == 'index' or template == 'cart' or template == '404' %}
+<nav class="cuppets-breadcrumbs container" aria-label="Navegación secundaria" style="padding-top: 16px; padding-bottom: 8px;">
+  <ol style="display: flex; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
+    <li>
+      <a href="{{ routes.root_url }}" style="color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px;">
+        {% render 'icon-paw' %}
+        <span>Inicio</span>
+      </a>
+    </li>
+    <li aria-hidden="true" style="opacity: 0.5;">/</li>
+
+    {% if template contains 'page' %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        {{ page.title }}
+      </li>
+
+    {% elsif template contains 'product' %}
+      {% if collection.url %}
+        <li>
+          <a href="{{ collection.url }}" style="color: var(--text-muted); text-decoration: none;">
+            {{ collection.title }}
+          </a>
+        </li>
+        <li aria-hidden="true" style="opacity: 0.5;">/</li>
+      {% else %}
+        <li>
+          <a href="{{ routes.all_products_collection_url }}" style="color: var(--text-muted); text-decoration: none;">
+            Catálogo
+          </a>
+        </li>
+        <li aria-hidden="true" style="opacity: 0.5;">/</li>
+      {% endif %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        {{ product.title }}
+      </li>
+
+    {% elsif template contains 'collection' and collection.handle %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        {{ collection.title }}
+      </li>
+
+    {% elsif template contains 'search' %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        Resultados para "{{ search.terms }}"
+      </li>
+
+    {% elsif template contains 'customers' %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        Mi Cuenta
+      </li>
+
+    {% else %}
+      <li aria-current="page" style="color: var(--text-dark); font-weight: 600;">
+        {{ page_title }}
+      </li>
+    {% endif %}
+  </ol>
+</nav>
+{% endunless %}

@@ -1,0 +1,17 @@
+<div class="cart-item">
+  <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}">
+  <div class="cart-item-info">
+    <span class="cart-item-title">{{ item.product.title }}</span>
+    <span class="cart-item-variant">Variante: {{ item.variant.title }}</span>
+    <span class="cart-item-price">{{ item.final_line_price | money }}</span>
+    
+    <div class="cart-qty-row">
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="window.shopifyCart.changeItem('{{ item.key }}', {{ item.quantity | minus: 1 }})">-</button>
+        <span class="qty-val">{{ item.quantity }}</span>
+        <button class="qty-btn" onclick="window.shopifyCart.changeItem('{{ item.key }}', {{ item.quantity | plus: 1 }})">+</button>
+      </div>
+      <button class="cart-item-remove" onclick="window.shopifyCart.changeItem('{{ item.key }}', 0)"><i class="fa-regular fa-trash-can"></i></button>
+    </div>
+  </div>
+</div>

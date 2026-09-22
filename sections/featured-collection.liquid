@@ -1,0 +1,61 @@
+<div class="featured-section section-padding">
+  <div class="container">
+    <div class="section-title-box flex-title">
+      <div>
+        <span class="section-subtitle"><i class="fa-solid fa-sparkles"></i> LO MÁS VENDIDO</span>
+        <h2 class="section-title-main">{{ section.settings.title | default: 'Productos Estrellas Cuppets' }}</h2>
+      </div>
+      <a href="/collections/all" class="btn btn-outline-purple">
+        Ver Catálogo Completo <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="products-grid">
+      {% assign featured_collection = collections[section.settings.collection] | default: collections.all %}
+      {% if featured_collection and featured_collection.products.size > 0 %}
+        {% for product in featured_collection.products limit: section.settings.products_to_show %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #FAF9FE; border-radius: var(--radius-lg); border: 1.5px dashed var(--border-color);">
+          <i class="fa-solid fa-paw" style="font-size: 2.8rem; color: var(--primary); margin-bottom: 14px; display: block;"></i>
+          <h3 style="color: var(--text-dark); font-size: 1.3rem; margin-bottom: 8px;">Colección en Preparación</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 480px; margin: 0 auto 20px;">
+            Los productos que añadas en tu panel de administración de Shopify aparecerán automáticamente en esta sección.
+          </p>
+          <a href="/admin/products" class="btn btn-purple btn-sm">
+            Gestionar Productos en Shopify
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Colección Destacada",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título de la sección",
+      "default": "Productos Estrellas Cuppets"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección a mostrar"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 4,
+      "default": 8,
+      "label": "Número de productos a mostrar"
+    }
+  ]
+}
+{% endschema %}

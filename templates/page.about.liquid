@@ -1,0 +1,21 @@
+{% comment %}
+  Template: page.about.liquid
+  Página especializada "Sobre Nosotros" para Cuppets Pets Luxury
+{% endcomment %}
+
+{% render 'breadcrumbs' %}
+
+<div class="page-about-wrapper">
+  {% section 'about-cuppets' %}
+  
+  {% if page.content != blank %}
+    <div class="container section-padding" style="max-width: 900px;">
+      <div class="page-body-content" style="color: var(--text-dark); line-height: 1.8; font-size: 1.05rem;">
+        {{ page.content }}
+      </div>
+    </div>
+  {% endif %}
+
+  {% section 'testimonials' %}
+  {% section 'trust-bar' %}
+</div>

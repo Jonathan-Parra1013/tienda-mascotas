@@ -1,0 +1,38 @@
+<div class="product-card">
+  {% if product.compare_at_price > product.price %}
+    <span class="product-badge-tag tag-discount">
+      OFERTA -{{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}%
+    </span>
+  {% else %}
+    <span class="product-badge-tag">EXCLUSIVO 🐾</span>
+  {% endif %}
+  
+  <div class="product-image-wrapper">
+    <a href="{{ product.url }}">
+      <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" class="product-img">
+    </a>
+  </div>
+
+  <div class="product-details">
+    <span class="product-category-name">{{ product.type | default: 'Accesorio' }}</span>
+    <a href="{{ product.url }}" class="product-title-link">
+      {{ product.title }}
+    </a>
+
+    <div class="product-price-row">
+      <span class="current-price">{{ product.price | money }}</span>
+      {% if product.compare_at_price > product.price %}
+        <span class="old-price">{{ product.compare_at_price | money }}</span>
+      {% endif %}
+    </div>
+
+    <div class="product-card-actions">
+      <button class="btn-add-cart" onclick="window.shopifyCart.addItem('{{ product.selected_or_first_available_variant.id }}', 1)">
+        <i class="fa-solid fa-basket-shopping"></i> + Añadir
+      </button>
+      <button class="btn-wa-direct" onclick="window.open('https://wa.me/{{ settings.whatsapp_number | default: '573009876543' }}?text=Hola%20Cuppets!%20Quiero%20comprar%20el%20accesorio:%20{{ product.title | url_encode }}', '_blank')">
+        <i class="fa-brands fa-whatsapp"></i>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+{% comment %}
+  Template: collection.liquid
+  Catálogo completo de Cuppets con filtros laterales y grid de productos
+{% endcomment %}
+
+<div class="catalog-hero-header" style="background: var(--bg-secondary); padding: 48px 0; border-bottom: 1px solid var(--border-purple);">
+  <div class="container">
+    <h1 style="font-family: var(--font-display); font-size: 2.4rem;">{{ collection.title }}</h1>
+    <p style="color: var(--text-muted); margin-top: 8px;">{{ collection.description | default: 'Explora nuestra selección premium de accesorios para perros y gatos.' }}</p>
+  </div>
+</div>
+
+<div class="container section-padding">
+  <div style="display: grid; grid-template-columns: 280px 1fr; gap: 32px;">
+    
+    <!-- Sidebar Filters -->
+    <aside class="catalog-filters-sidebar">
+      <div class="filter-panel" style="background: #fff; border: 1px solid var(--border-purple); border-radius: var(--radius-md); padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="font-family:var(--font-body); font-weight:700;"><i class="fa-solid fa-sliders"></i> Filtrar</h3>
+          <a href="{{ collection.url }}" style="font-size:0.85rem; color:var(--primary-purple);">Restablecer</a>
+        </div>
+
+        <!-- Pet Type Tags -->
+        <div style="margin-bottom:20px;">
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">Tipo de Mascota</h4>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <a href="{{ collection.url }}" style="font-size:0.9rem; padding:6px 0; {% unless current_tags %}font-weight:700; color:var(--primary-purple);{% endunless %}">🐾 Todos</a>
+            {% for tag in collection.all_tags %}
+              {% if tag == 'Perro' or tag == 'Gato' %}
+                <a href="{{ collection.url }}/{{ tag | handle }}" style="font-size:0.9rem; padding:6px 0; {% if current_tags contains tag %}font-weight:700; color:var(--primary-purple);{% endif %}">
+                  {% if tag == 'Perro' %}🐶{% else %}🐱{% endif %} {{ tag }}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">Ordenar Por</h4>
+          <select onchange="window.location.href = '{{ collection.url }}?sort_by=' + this.value" style="width:100%; padding:10px; border:1px solid var(--border-light); border-radius:var(--radius-md);">
+            <option value="manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>Destacados</option>
+            <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Precio: Menor a Mayor</option>
+            <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Precio: Mayor a Menor</option>
+            <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Más Vendidos</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product Grid -->
+    <div>
+      <p style="color:var(--text-muted); margin-bottom:20px;">Mostrando {{ collection.products_count }} accesorio(s)</p>
+
+      {% if collection.products.size > 0 %}
+        <div class="products-grid">
+          {% for product in collection.products %}
+            {% render 'product-card', product: product %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="text-align:center; padding:60px 20px;">
+          <i class="fa-solid fa-shield-dog" style="font-size:3rem; color:var(--border-purple); margin-bottom:16px;"></i>
+          <h3>No hay productos en esta colección aún</h3>
+          <p style="color:var(--text-muted);">Pronto agregaremos más accesorios.</p>
+          <a href="/collections/all" class="btn btn-purple" style="margin-top:16px;">Ver Todos los Productos</a>
+        </div>
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        <div style="text-align:center; margin-top:40px;">
+          {{ paginate | default_pagination }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
