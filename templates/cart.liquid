@@ -54,9 +54,15 @@
             <span style="color:var(--primary-dark);">{{ cart.total_price | money }}</span>
           </div>
 
-          <a href="/checkout" class="btn btn-purple btn-lg" style="width:100%; margin-bottom:12px;">
-            <i class="fa-solid fa-lock"></i> Finalizar Compra Segura
-          </a>
+          {% if customer %}
+            <a href="/checkout" class="btn btn-purple btn-lg" style="width:100%; margin-bottom:12px; justify-content: center;">
+              <i class="fa-solid fa-lock"></i> Finalizar Compra Segura
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-purple btn-lg" onclick="requireLoginForCheckout()" style="width:100%; margin-bottom:12px; justify-content: center; border:none; cursor:pointer;">
+              <i class="fa-solid fa-lock"></i> Iniciar Sesión para Comprar
+            </button>
+          {% endif %}
           <button type="button" class="btn btn-whatsapp-full" style="width:100%; background:#25D366; color:#fff; border:none; padding:14px; border-radius:var(--radius-full); font-weight:600; cursor:pointer;" onclick="checkoutViaWhatsApp()">
             <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
           </button>

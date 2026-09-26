@@ -3,8 +3,8 @@
   <div class="search-modal-header">
     <div class="search-input-wrapper">
       <i class="fa-solid fa-magnifying-glass search-modal-icon"></i>
-      <input type="text" id="predictive-search-input" placeholder="Buscar por nombre, categoría o especie..." oninput="handlePredictiveSearch(this.value)">
-      <button class="search-clear-icon" onclick="clearPredictiveSearch()"><i class="fa-solid fa-xmark"></i></button>
+      <input type="text" id="predictive-search-input" placeholder="Buscar por nombre, categoría o especie (ej: Perros, Arnés, Cama)..." oninput="handlePredictiveSearch(this.value)">
+      <button class="search-clear-icon" onclick="clearPredictiveSearch()" aria-label="Limpiar"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <button class="search-modal-close" onclick="closeSearchModal()">Esc / Cerrar</button>
   </div>
@@ -13,11 +13,14 @@
     <div class="search-default-suggestions">
       <span>Búsquedas populares:</span>
       <div class="suggestion-chips">
-        <button class="chip-btn" onclick="executeSearchChip('Collar')">Collares</button>
+        <button class="chip-btn" onclick="executeSearchChip('Perro')">🐶 Perros</button>
+        <button class="chip-btn" onclick="executeSearchChip('Gato')">🐱 Gatos</button>
         <button class="chip-btn" onclick="executeSearchChip('Arnés')">Arneses Anti-tirones</button>
-        <button class="chip-btn" onclick="executeSearchChip('Placa')">Placas Grabadas</button>
+        <button class="chip-btn" onclick="executeSearchChip('Collar')">Collares Padded</button>
         <button class="chip-btn" onclick="executeSearchChip('Cama')">Camas Ortopédicas</button>
       </div>
     </div>
+    <div id="predictive-search-results"></div>
   </div>
 </div>
+
