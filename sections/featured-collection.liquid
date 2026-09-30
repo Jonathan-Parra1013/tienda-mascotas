@@ -27,15 +27,6 @@
           <span class="pet-tab-counter" id="count-cat">4</span>
         </button>
       </div>
-
-      <!-- Quick Category Subfilters -->
-      <div class="catalog-subfilters">
-        <button class="subfilter-chip active" data-cat="all" onclick="filterCatalogByCategory('all', this)">Todos</button>
-        <button class="subfilter-chip" data-cat="arneses" onclick="filterCatalogByCategory('arneses', this)">Arneses & Pecheras</button>
-        <button class="subfilter-chip" data-cat="collares" onclick="filterCatalogByCategory('collares', this)">Collares Padded</button>
-        <button class="subfilter-chip" data-cat="correas" onclick="filterCatalogByCategory('correas', this)">Correas Anti-Tirón</button>
-        <button class="subfilter-chip" data-cat="camas" onclick="filterCatalogByCategory('camas', this)">Camas & Descanso</button>
-      </div>
     </div>
 
     <!-- Products Grid Container -->
@@ -44,23 +35,45 @@
       {% if featured_collection and featured_collection.products.size > 0 %}
         {% for product in featured_collection.products limit: section.settings.products_to_show %}
           {% assign pet_type = 'all' %}
-          {% if product.tags contains 'perro' or product.tags contains 'Perro' or product.title contains 'Perro' or product.title contains 'perro' %}
-            {% assign pet_type = 'dog' %}
-          {% elsif product.tags contains 'gato' or product.tags contains 'Gato' or product.title contains 'Gato' or product.title contains 'gato' %}
+          {% assign prod_text = product.title | append: ' ' | append: product.description | append: ' ' | append: product.tags | append: ' ' | append: product.type | downcase %}
+          {% if prod_text contains 'perro' or prod_text contains 'canin' or prod_text contains 'dog' or prod_text contains 'cachorro' %}
+            {% if prod_text contains 'gato' or prod_text contains 'felin' or prod_text contains 'cat' or prod_text contains 'michi' %}
+              {% assign pet_type = 'both' %}
+            {% else %}
+              {% assign pet_type = 'dog' %}
+            {% endif %}
+          {% elsif prod_text contains 'gato' or prod_text contains 'felin' or prod_text contains 'cat' or prod_text contains 'michi' or prod_text contains 'minino' %}
             {% assign pet_type = 'cat' %}
           {% endif %}
-          <div class="catalog-product-item" data-pet-type="{{ pet_type }}" data-category="{{ product.type | handleize }}">
+
+          {% assign prod_cat = 'accesorios' %}
+          {% if prod_text contains 'combo' or prod_text contains 'promo' or prod_text contains 'kit ' or prod_text contains 'set ' or prod_text contains 'pack' or prod_text contains 'descuento' or prod_text contains 'oferta' %}
+            {% assign prod_cat = 'promociones' %}
+          {% elsif prod_text contains 'dient' or prod_text contains 'dental' or prod_text contains 'cepillo' or prod_text contains 'sarro' or prod_text contains 'higien' or prod_text contains 'shampoo' or prod_text contains 'cortauna' or prod_text contains 'limpia' or prod_text contains 'baño' or prod_text contains 'jabon' or prod_text contains 'peine' or prod_text contains 'grooming' %}
+            {% assign prod_cat = 'higiene' %}
+          {% elsif prod_text contains 'arnes' or prod_text contains 'pecher' or prod_text contains 'chaleco' %}
+            {% assign prod_cat = 'arneses' %}
+          {% elsif prod_text contains 'collar' or prod_text contains 'chapa' or prod_text contains 'medalla' or prod_text contains 'identificad' or prod_text contains 'tag' or prod_text contains 'placa' %}
+            {% assign prod_cat = 'collares' %}
+          {% elsif prod_text contains 'correa' or prod_text contains 'paseo' or prod_text contains 'lazo' or prod_text contains 'guia' %}
+            {% assign prod_cat = 'correas' %}
+          {% elsif prod_text contains 'cama' or prod_text contains 'cueva' or prod_text contains 'iglu' or prod_text contains 'colchon' or prod_text contains 'cojin' or prod_text contains 'descanso' %}
+            {% assign prod_cat = 'camas' %}
+          {% elsif prod_text contains 'juguet' or prod_text contains 'pelota' or prod_text contains 'cuerda' or prod_text contains 'rascador' or prod_text contains 'interactiv' or prod_text contains 'mordedor' or prod_text contains 'peluche' %}
+            {% assign prod_cat = 'juguetes' %}
+          {% endif %}
+          <div class="catalog-product-item" data-pet-type="{{ pet_type }}" data-category="{{ prod_cat }}" data-price="{{ product.price | divided_by: 100.0 }}" data-rating="5" data-title="{{ product.title | escape }}">
             {% render 'product-card', product: product %}
           </div>
         {% endfor %}
       {% else %}
         <!-- Rich Built-In Functional Interactive Catalog (4 Perros + 4 Gatos) -->
         <!-- 🐶 DOG PRODUCTS -->
-        <div class="catalog-product-item" data-pet-type="dog" data-category="arneses">
+        <div class="catalog-product-item" data-pet-type="dog" data-category="arneses" data-price="69900" data-rating="5" data-title="Arnés Anti-Tirones Acolchado Reflectivo">
           <div class="product-card">
             <span class="product-badge-tag badge-dog">🐶 PERROS · MÁS VENDIDO</span>
             <div class="product-image-wrapper">
-              <a href="/collections/perros">
+              <a href="/collections/all?pet=dog">
                 <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Arnés Ergonómico Pro Dog" class="product-img" loading="lazy">
               </a>
             </div>
@@ -84,17 +97,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="dog" data-category="collares">
+        <div class="catalog-product-item" data-pet-type="dog" data-category="collares" data-price="45000" data-rating="5" data-title="Collar Impermeable Hipoalergénico con Placa">
           <div class="product-card">
             <span class="product-badge-tag badge-dog">🐶 PERROS · PREMIUM</span>
             <div class="product-image-wrapper">
-              <a href="/collections/perros">
+              <a href="/collections/all?pet=dog">
                 <img src="https://images.unsplash.com/photo-1535294435445-d7249524ef2e?auto=format&fit=crop&w=600&q=80" alt="Collar Acolchado Padded Dog" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-tag"></i> Collar Soft-Padded</span>
-              <a href="/collections/perros" class="product-title-link">Collar Impermeable Hipoalergénico con Placa</a>
+              <a href="/collections/all?pet=dog" class="product-title-link">Collar Impermeable Hipoalergénico con Placa</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(94)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$45.000 COP</span>
@@ -112,17 +125,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="dog" data-category="correas">
+        <div class="catalog-product-item" data-pet-type="dog" data-category="correas" data-price="52000" data-rating="5" data-title="Correa Manos Libres Elástica Anti-Impacto">
           <div class="product-card">
             <span class="product-badge-tag badge-dog">🐶 PERROS · PASEO</span>
             <div class="product-image-wrapper">
-              <a href="/collections/perros">
+              <a href="/collections/all?pet=dog">
                 <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=600&q=80" alt="Correa Manos Libres Dog" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-route"></i> Correa de Paseo</span>
-              <a href="/collections/perros" class="product-title-link">Correa Manos Libres Elástica Anti-Impacto</a>
+              <a href="/collections/all?pet=dog" class="product-title-link">Correa Manos Libres Elástica Anti-Impacto</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(86)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$52.000 COP</span>
@@ -140,17 +153,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="dog" data-category="camas">
+        <div class="catalog-product-item" data-pet-type="dog" data-category="camas" data-price="120000" data-rating="5" data-title="Cama Memory Foam Calmante Antiestrés">
           <div class="product-card">
             <span class="product-badge-tag badge-dog">🐶 PERROS · DESCANSO</span>
             <div class="product-image-wrapper">
-              <a href="/collections/perros">
+              <a href="/collections/all?pet=dog">
                 <img src="https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=600&q=80" alt="Cama Ortopédica Memory Foam Dog" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-bed"></i> Cama Ortopédica</span>
-              <a href="/collections/perros" class="product-title-link">Cama Memory Foam Calmante Antiestrés</a>
+              <a href="/collections/all?pet=dog" class="product-title-link">Cama Memory Foam Calmante Antiestrés</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(162)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$120.000 COP</span>
@@ -169,17 +182,17 @@
         </div>
 
         <!-- 🐱 CAT PRODUCTS -->
-        <div class="catalog-product-item" data-pet-type="cat" data-category="collares">
+        <div class="catalog-product-item" data-pet-type="cat" data-category="collares" data-price="38000" data-rating="5" data-title="Collar Velvet Antiahogo con Placa y Cascabel">
           <div class="product-card">
             <span class="product-badge-tag badge-cat">🐱 GATOS · TOP SEGURIDAD</span>
             <div class="product-image-wrapper">
-              <a href="/collections/gatos">
+              <a href="/collections/all?pet=cat">
                 <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Collar Antiahogo Velvet Cat" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-cat"></i> Collar Antiahogo</span>
-              <a href="/collections/gatos" class="product-title-link">Collar Velvet Antiahogo con Placa y Cascabel</a>
+              <a href="/collections/all?pet=cat" class="product-title-link">Collar Velvet Antiahogo con Placa y Cascabel</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(110)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$38.000 COP</span>
@@ -197,17 +210,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="cat" data-category="arneses">
+        <div class="catalog-product-item" data-pet-type="cat" data-category="arneses" data-price="48000" data-rating="5" data-title="Pechera Ergonómica Anti-Escape de Malla Suave">
           <div class="product-card">
             <span class="product-badge-tag badge-cat">🐱 GATOS · ESCAPE-PROOF</span>
             <div class="product-image-wrapper">
-              <a href="/collections/gatos">
+              <a href="/collections/all?pet=cat">
                 <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80" alt="Pechera Ultraliviana Cat" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-vest"></i> Arnés Ultraligero Gatuno</span>
-              <a href="/collections/gatos" class="product-title-link">Pechera Ergonómica Anti-Escape de Malla Suave</a>
+              <a href="/collections/all?pet=cat" class="product-title-link">Pechera Ergonómica Anti-Escape de Malla Suave</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(78)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$48.000 COP</span>
@@ -225,17 +238,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="cat" data-category="camas">
+        <div class="catalog-product-item" data-pet-type="cat" data-category="camas" data-price="85000" data-rating="5" data-title="Cueva Iglú 2 en 1 Térmica y Lavable">
           <div class="product-card">
             <span class="product-badge-tag badge-cat">🐱 GATOS · DORMIR Y JUEGO</span>
             <div class="product-image-wrapper">
-              <a href="/collections/gatos">
+              <a href="/collections/all?pet=cat">
                 <img src="https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=600&q=80" alt="Cueva Térmica Cat" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-bed"></i> Cueva Térmica Felina</span>
-              <a href="/collections/gatos" class="product-title-link">Cueva Iglú 2 en 1 Térmica y Lavable</a>
+              <a href="/collections/all?pet=cat" class="product-title-link">Cueva Iglú 2 en 1 Térmica y Lavable</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(145)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$85.000 COP</span>
@@ -253,17 +266,17 @@
           </div>
         </div>
 
-        <div class="catalog-product-item" data-pet-type="cat" data-category="correas">
+        <div class="catalog-product-item" data-pet-type="cat" data-category="correas" data-price="54000" data-rating="5" data-title="Set Arnés Hipoalergénico + Correa Liviana">
           <div class="product-card">
             <span class="product-badge-tag badge-cat">🐱 GATOS · PASEO LIVIANO</span>
             <div class="product-image-wrapper">
-              <a href="/collections/gatos">
+              <a href="/collections/all?pet=cat">
                 <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=600&q=80" alt="Set Arnés y Correa Cat" class="product-img" loading="lazy">
               </a>
             </div>
             <div class="product-details">
               <span class="product-category-name"><i class="fa-solid fa-route"></i> Set Paseo Gatuno</span>
-              <a href="/collections/gatos" class="product-title-link">Set Arnés Hipoalergénico + Correa Liviana</a>
+              <a href="/collections/all?pet=cat" class="product-title-link">Set Arnés Hipoalergénico + Correa Liviana</a>
               <div class="product-rating-stars">★★★★★ <span class="review-count">(67)</span></div>
               <div class="product-price-row">
                 <span class="current-price">$54.000 COP</span>

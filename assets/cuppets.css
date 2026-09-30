@@ -575,6 +575,26 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--brand-purple);
 }
 
+/* Promo Nav Link */
+.nav-link-promo {
+  background: linear-gradient(135deg, var(--brand-purple) 0%, var(--brand-honey) 100%) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  border-radius: var(--radius-full) !important;
+  padding: 10px 20px !important;
+  animation: promo-pulse 2.5s ease-in-out infinite;
+}
+.nav-link-promo:hover {
+  color: #fff !important;
+  opacity: 0.9;
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--brand-honey) 0%, var(--brand-purple) 100%) !important;
+}
+@keyframes promo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(92,59,255,0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(92,59,255,0); }
+}
+
 /* Dropdowns */
 .nav-item.dropdown {
   position: relative;
@@ -847,6 +867,8 @@ h1, h2, h3, h4, h5, h6 {
   gap: 24px;
   margin-bottom: 24px;
 }
+
+
 
 .species-banner-card {
   position: relative;
@@ -1210,28 +1232,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   CATEGORIES GRID - BALANCED 4-COLUMN SINGLE LINE
+   CATEGORIES GRID - BALANCED 3-COLUMN (3x2) LAYOUT
    ========================================================================== */
 .categories-masonry-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
 .category-card {
   position: relative;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  height: 320px;
+  height: 280px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(115, 100, 210, 0.12);
+  border: 1.5px solid rgba(115, 100, 210, 0.12);
   transition: all var(--transition-smooth);
 }
 
 .category-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px -10px rgba(13, 27, 54, 0.25), 0 0 20px rgba(115, 100, 210, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px -8px rgba(13, 27, 54, 0.25), 0 0 20px rgba(92, 59, 255, 0.2);
   border-color: var(--brand-purple-light);
 }
 
@@ -1259,7 +1281,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .category-card:hover .category-overlay {
-  background: linear-gradient(180deg, rgba(115, 100, 210, 0.2) 0%, rgba(13, 27, 54, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(92, 59, 255, 0.25) 0%, rgba(13, 27, 54, 0.95) 100%);
 }
 
 .category-badge {

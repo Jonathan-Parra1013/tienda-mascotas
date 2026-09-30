@@ -1,7 +1,34 @@
 {% comment %}
   Template: 404.liquid
-  Página de error 404 personalizada para Cuppets
+  Página de error 404 personalizada para Cuppets con auto-redirección inteligente
 {% endcomment %}
+
+<script>
+  (function() {
+    var path = window.location.pathname.toLowerCase();
+    if (path.indexOf('sobre-nosotros') !== -1 || path.indexOf('about') !== -1) {
+      window.location.replace('/#sobre-nosotros');
+      return;
+    }
+    if (path.indexOf('/collections/') !== -1) {
+      if (path.indexOf('perro') !== -1) {
+        window.location.replace('/collections/all?pet=dog');
+      } else if (path.indexOf('gato') !== -1) {
+        window.location.replace('/collections/all?pet=cat');
+      } else if (path.indexOf('arnes') !== -1) {
+        window.location.replace('/collections/all?category=arneses');
+      } else if (path.indexOf('collar') !== -1) {
+        window.location.replace('/collections/all?category=collares');
+      } else if (path.indexOf('correa') !== -1) {
+        window.location.replace('/collections/all?category=correas');
+      } else if (path.indexOf('cama') !== -1) {
+        window.location.replace('/collections/all?category=camas');
+      } else {
+        window.location.replace('/collections/all');
+      }
+    }
+  })();
+</script>
 
 {% render 'breadcrumbs' %}
 

@@ -14,7 +14,7 @@
   <div class="container">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
       <div>
-        <span class="section-subtitle">
+        <span class="section-subtitle" id="catalog-hero-badge">
           {% if current_pet == 'dog' %}
             <i class="fa-solid fa-dog"></i> COLECCIÓN CANINA
           {% elsif current_pet == 'cat' %}
@@ -23,7 +23,7 @@
             <i class="fa-solid fa-sparkles"></i> CATÁLOGO OFICIAL
           {% endif %}
         </span>
-        <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 3.5vw, 2.6rem); color: var(--brand-navy); margin-top: 6px;">
+        <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 3.5vw, 2.6rem); color: var(--brand-navy); margin-top: 6px;" id="catalog-hero-title">
           {{ collection.title | default: 'Todos los Accesorios Cuppets' }}
         </h1>
         <p style="color: var(--text-muted); margin-top: 8px; max-width: 600px;">
@@ -33,13 +33,13 @@
 
       <!-- Quick Species Filter Switcher -->
       <div class="species-switcher" style="box-shadow: var(--shadow-sm); background: white; border: 1px solid var(--border-color);">
-        <button class="switcher-btn {% if current_pet == 'all' %}active{% endif %}" onclick="filterCatalogByPet('all', this)">
+        <button class="switcher-btn {% if current_pet == 'all' %}active{% endif %}" data-pet="all" data-type="all" onclick="filterCatalogByPet('all', this)">
           <i class="fa-solid fa-border-all"></i> Todos
         </button>
-        <button class="switcher-btn {% if current_pet == 'dog' %}active{% endif %}" onclick="filterCatalogByPet('dog', this)">
+        <button class="switcher-btn {% if current_pet == 'dog' %}active{% endif %}" data-pet="dog" data-type="dog" onclick="filterCatalogByPet('dog', this)">
           <i class="fa-solid fa-dog"></i> Perros
         </button>
-        <button class="switcher-btn {% if current_pet == 'cat' %}active{% endif %}" onclick="filterCatalogByPet('cat', this)">
+        <button class="switcher-btn {% if current_pet == 'cat' %}active{% endif %}" data-pet="cat" data-type="cat" onclick="filterCatalogByPet('cat', this)">
           <i class="fa-solid fa-cat"></i> Gatos
         </button>
       </div>
@@ -62,13 +62,13 @@
         <div style="margin-bottom:24px;">
           <h4 style="font-size:0.88rem; font-weight:700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand-navy); margin-bottom:12px;">Especie</h4>
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="filter-link-btn {% if current_pet == 'all' %}active{% endif %}" onclick="filterCatalogByPet('all', this)">
+            <button class="filter-link-btn {% if current_pet == 'all' %}active{% endif %}" data-pet="all" onclick="filterCatalogByPet('all', this)">
               🐾 Todos los animales
             </button>
-            <button class="filter-link-btn {% if current_pet == 'dog' %}active{% endif %}" onclick="filterCatalogByPet('dog', this)">
+            <button class="filter-link-btn {% if current_pet == 'dog' %}active{% endif %}" data-pet="dog" onclick="filterCatalogByPet('dog', this)">
               🐶 Para Perros
             </button>
-            <button class="filter-link-btn {% if current_pet == 'cat' %}active{% endif %}" onclick="filterCatalogByPet('cat', this)">
+            <button class="filter-link-btn {% if current_pet == 'cat' %}active{% endif %}" data-pet="cat" onclick="filterCatalogByPet('cat', this)">
               🐱 Para Gatos
             </button>
           </div>
@@ -92,6 +92,15 @@
             </button>
             <button class="filter-link-btn" data-cat="camas" onclick="filterCatalogByCategory('camas', this)">
               🛏️ Camas &amp; Descanso
+            </button>
+            <button class="filter-link-btn" data-cat="juguetes" onclick="filterCatalogByCategory('juguetes', this)">
+              🧸 Juguetes &amp; Entretenimiento
+            </button>
+            <button class="filter-link-btn" data-cat="higiene" onclick="filterCatalogByCategory('higiene', this)">
+              🧴 Higiene &amp; Cuidado
+            </button>
+            <button class="filter-link-btn" data-cat="promociones" onclick="filterCatalogByCategory('promociones', this)" style="background: linear-gradient(135deg, var(--brand-purple-soft) 0%, #fff8e7 100%); border: 1.5px solid var(--brand-honey); font-weight: 700;">
+              🔥 Promociones &amp; Combos
             </button>
           </div>
         </div>
@@ -121,28 +130,109 @@
         {% if collection.products.size > 0 %}
           {% for product in collection.products %}
             {% assign pet_type = 'all' %}
-            {% if product.tags contains 'perro' or product.tags contains 'Perro' or product.title contains 'Perro' or product.title contains 'perro' %}
-              {% assign pet_type = 'dog' %}
-            {% elsif product.tags contains 'gato' or product.tags contains 'Gato' or product.title contains 'Gato' or product.title contains 'gato' %}
+            {% assign prod_text = product.title | append: ' ' | append: product.description | append: ' ' | append: product.tags | append: ' ' | append: product.type | downcase %}
+            
+            {% if prod_text contains 'perro' or prod_text contains 'canin' or prod_text contains 'dog' or prod_text contains 'cachorro' %}
+              {% if prod_text contains 'gato' or prod_text contains 'felin' or prod_text contains 'cat' or prod_text contains 'michi' %}
+                {% assign pet_type = 'both' %}
+              {% else %}
+                {% assign pet_type = 'dog' %}
+              {% endif %}
+            {% elsif prod_text contains 'gato' or prod_text contains 'felin' or prod_text contains 'cat' or prod_text contains 'michi' or prod_text contains 'minino' %}
               {% assign pet_type = 'cat' %}
             {% endif %}
-            <div class="catalog-product-item" data-pet-type="{{ pet_type }}" data-category="{{ product.type | handleize }}">
+
+            {% assign prod_cat = 'accesorios' %}
+            {% if prod_text contains 'combo' or prod_text contains 'promo' or prod_text contains 'kit ' or prod_text contains 'set ' or prod_text contains 'pack' or prod_text contains 'descuento' or prod_text contains 'oferta' %}
+              {% assign prod_cat = 'promociones' %}
+            {% elsif prod_text contains 'dient' or prod_text contains 'dental' or prod_text contains 'cepillo' or prod_text contains 'sarro' or prod_text contains 'higien' or prod_text contains 'shampoo' or prod_text contains 'cortauna' or prod_text contains 'limpia' or prod_text contains 'baño' or prod_text contains 'jabon' or prod_text contains 'peine' or prod_text contains 'grooming' %}
+              {% assign prod_cat = 'higiene' %}
+            {% elsif prod_text contains 'arnes' or prod_text contains 'pecher' or prod_text contains 'chaleco' %}
+              {% assign prod_cat = 'arneses' %}
+            {% elsif prod_text contains 'collar' or prod_text contains 'chapa' or prod_text contains 'medalla' or prod_text contains 'identificad' or prod_text contains 'tag' or prod_text contains 'placa' %}
+              {% assign prod_cat = 'collares' %}
+            {% elsif prod_text contains 'correa' or prod_text contains 'paseo' or prod_text contains 'lazo' or prod_text contains 'guia' %}
+              {% assign prod_cat = 'correas' %}
+            {% elsif prod_text contains 'cama' or prod_text contains 'cueva' or prod_text contains 'iglu' or prod_text contains 'colchon' or prod_text contains 'cojin' or prod_text contains 'descanso' %}
+              {% assign prod_cat = 'camas' %}
+            {% elsif prod_text contains 'juguet' or prod_text contains 'pelota' or prod_text contains 'cuerda' or prod_text contains 'rascador' or prod_text contains 'interactiv' or prod_text contains 'mordedor' or prod_text contains 'peluche' %}
+              {% assign prod_cat = 'juguetes' %}
+            {% endif %}
+
+            <div class="catalog-product-item" data-pet-type="{{ pet_type }}" data-category="{{ prod_cat }}" data-price="{{ product.price | divided_by: 100.0 }}" data-rating="5" data-title="{{ product.title | escape }}">
               {% render 'product-card', product: product %}
             </div>
           {% endfor %}
         {% else %}
+          <!-- 🔥 PROMOCIONES / COMBOS -->
+          <div class="catalog-product-item" data-pet-type="both" data-category="promociones" data-price="89000" data-rating="5" data-title="Combo Paseo Perro: Arnés + Correa + Collar">
+            <div class="product-card">
+              <span class="product-badge-tag" style="background: linear-gradient(135deg, var(--brand-purple), var(--brand-honey)); color:#fff;">🔥 COMBO · PROMO ESPECIAL</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=promociones">
+                  <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=600&q=80" alt="Combo Paseo Perro" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-tags"></i> Combo Paseo Completo</span>
+                <a href="/collections/all?category=promociones" class="product-title-link">Combo Paseo Perro: Arnés + Correa + Collar</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(97)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$89.000 COP</span>
+                  <span class="old-price">$135.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('combo-paseo-dog', 'Combo Paseo Perro: Arnés+Correa+Collar 🔥', 89000, 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=300&q=80', 'Perro')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20el%20Combo%20Paseo%20Perro', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="catalog-product-item" data-pet-type="both" data-category="promociones" data-price="75000" data-rating="5" data-title="Kit Esencial Gato: Pechera + Correa + Collar">
+            <div class="product-card">
+              <span class="product-badge-tag" style="background: linear-gradient(135deg, var(--brand-purple), var(--brand-honey)); color:#fff;">🔥 COMBO · AHORRA 40%</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=promociones">
+                  <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80" alt="Kit Esencial Gato" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-tags"></i> Kit Esencial Felino</span>
+                <a href="/collections/all?category=promociones" class="product-title-link">Kit Esencial Gato: Pechera + Correa + Collar</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(62)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$75.000 COP</span>
+                  <span class="old-price">$124.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('kit-esencial-cat', 'Kit Esencial Gato: Pechera+Correa+Collar 🔥', 75000, 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=300&q=80', 'Gato')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20el%20Kit%20Esencial%20Gato', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 🐶 PERROS PRODUCTS -->
-          <div class="catalog-product-item" data-pet-type="dog" data-category="arneses" data-price="69900" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="dog" data-category="arneses" data-price="69900" data-rating="5" data-title="Arnés Anti-Tirones Acolchado Reflectivo">
             <div class="product-card">
               <span class="product-badge-tag badge-dog">🐶 PERROS · MÁS VENDIDO</span>
               <div class="product-image-wrapper">
-                <a href="/collections/perros">
+                <a href="/collections/all?pet=dog">
                   <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Arnés Ergonómico Pro Dog" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-vest"></i> Arnés Ergonómico Pro</span>
-                <a href="/collections/perros" class="product-title-link">Arnés Anti-Tirones Acolchado Reflectivo</a>
+                <a href="/collections/all?pet=dog" class="product-title-link">Arnés Anti-Tirones Acolchado Reflectivo</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(128)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$69.900 COP</span>
@@ -160,17 +250,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="dog" data-category="collares" data-price="45000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="dog" data-category="collares" data-price="45000" data-rating="5" data-title="Collar Impermeable Hipoalergénico con Placa">
             <div class="product-card">
               <span class="product-badge-tag badge-dog">🐶 PERROS · PREMIUM</span>
               <div class="product-image-wrapper">
-                <a href="/collections/perros">
+                <a href="/collections/all?pet=dog">
                   <img src="https://images.unsplash.com/photo-1535294435445-d7249524ef2e?auto=format&fit=crop&w=600&q=80" alt="Collar Acolchado Padded Dog" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-tag"></i> Collar Soft-Padded</span>
-                <a href="/collections/perros" class="product-title-link">Collar Impermeable Hipoalergénico con Placa</a>
+                <a href="/collections/all?pet=dog" class="product-title-link">Collar Impermeable Hipoalergénico con Placa</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(94)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$45.000 COP</span>
@@ -188,17 +278,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="dog" data-category="correas" data-price="52000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="dog" data-category="correas" data-price="52000" data-rating="5" data-title="Correa Manos Libres Elástica Anti-Impacto">
             <div class="product-card">
               <span class="product-badge-tag badge-dog">🐶 PERROS · PASEO</span>
               <div class="product-image-wrapper">
-                <a href="/collections/perros">
+                <a href="/collections/all?pet=dog">
                   <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=600&q=80" alt="Correa Manos Libres Dog" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-route"></i> Correa de Paseo</span>
-                <a href="/collections/perros" class="product-title-link">Correa Manos Libres Elástica Anti-Impacto</a>
+                <a href="/collections/all?pet=dog" class="product-title-link">Correa Manos Libres Elástica Anti-Impacto</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(86)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$52.000 COP</span>
@@ -216,17 +306,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="dog" data-category="camas" data-price="120000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="dog" data-category="camas" data-price="120000" data-rating="5" data-title="Cama Memory Foam Calmante Antiestrés">
             <div class="product-card">
               <span class="product-badge-tag badge-dog">🐶 PERROS · DESCANSO</span>
               <div class="product-image-wrapper">
-                <a href="/collections/perros">
+                <a href="/collections/all?pet=dog">
                   <img src="https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=600&q=80" alt="Cama Ortopédica Memory Foam Dog" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-bed"></i> Cama Ortopédica</span>
-                <a href="/collections/perros" class="product-title-link">Cama Memory Foam Calmante Antiestrés</a>
+                <a href="/collections/all?pet=dog" class="product-title-link">Cama Memory Foam Calmante Antiestrés</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(162)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$120.000 COP</span>
@@ -245,17 +335,17 @@
           </div>
 
           <!-- 🐱 GATOS PRODUCTS -->
-          <div class="catalog-product-item" data-pet-type="cat" data-category="collares" data-price="38000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="cat" data-category="collares" data-price="38000" data-rating="5" data-title="Collar Velvet Antiahogo con Placa y Cascabel">
             <div class="product-card">
               <span class="product-badge-tag badge-cat">🐱 GATOS · TOP SEGURIDAD</span>
               <div class="product-image-wrapper">
-                <a href="/collections/gatos">
+                <a href="/collections/all?pet=cat">
                   <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Collar Antiahogo Velvet Cat" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-cat"></i> Collar Antiahogo</span>
-                <a href="/collections/gatos" class="product-title-link">Collar Velvet Antiahogo con Placa y Cascabel</a>
+                <a href="/collections/all?pet=cat" class="product-title-link">Collar Velvet Antiahogo con Placa y Cascabel</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(110)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$38.000 COP</span>
@@ -273,17 +363,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="cat" data-category="arneses" data-price="48000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="cat" data-category="arneses" data-price="48000" data-rating="5" data-title="Pechera Ergonómica Anti-Escape de Malla Suave">
             <div class="product-card">
               <span class="product-badge-tag badge-cat">🐱 GATOS · ESCAPE-PROOF</span>
               <div class="product-image-wrapper">
-                <a href="/collections/gatos">
+                <a href="/collections/all?pet=cat">
                   <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=600&q=80" alt="Pechera Ultraliviana Cat" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-vest"></i> Arnés Ultraligero Gatuno</span>
-                <a href="/collections/gatos" class="product-title-link">Pechera Ergonómica Anti-Escape de Malla Suave</a>
+                <a href="/collections/all?pet=cat" class="product-title-link">Pechera Ergonómica Anti-Escape de Malla Suave</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(78)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$48.000 COP</span>
@@ -301,17 +391,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="cat" data-category="camas" data-price="85000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="cat" data-category="camas" data-price="85000" data-rating="5" data-title="Cueva Iglú 2 en 1 Térmica y Lavable">
             <div class="product-card">
               <span class="product-badge-tag badge-cat">🐱 GATOS · DORMIR Y JUEGO</span>
               <div class="product-image-wrapper">
-                <a href="/collections/gatos">
+                <a href="/collections/all?pet=cat">
                   <img src="https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=600&q=80" alt="Cueva Térmica Cat" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-bed"></i> Cueva Térmica Felina</span>
-                <a href="/collections/gatos" class="product-title-link">Cueva Iglú 2 en 1 Térmica y Lavable</a>
+                <a href="/collections/all?pet=cat" class="product-title-link">Cueva Iglú 2 en 1 Térmica y Lavable</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(145)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$85.000 COP</span>
@@ -329,17 +419,17 @@
             </div>
           </div>
 
-          <div class="catalog-product-item" data-pet-type="cat" data-category="correas" data-price="54000" data-rating="5">
+          <div class="catalog-product-item" data-pet-type="cat" data-category="correas" data-price="54000" data-rating="5" data-title="Set Arnés Hipoalergénico + Correa Liviana">
             <div class="product-card">
               <span class="product-badge-tag badge-cat">🐱 GATOS · PASEO LIVIANO</span>
               <div class="product-image-wrapper">
-                <a href="/collections/gatos">
+                <a href="/collections/all?pet=cat">
                   <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=600&q=80" alt="Set Arnés y Correa Cat" class="product-img" loading="lazy">
                 </a>
               </div>
               <div class="product-details">
                 <span class="product-category-name"><i class="fa-solid fa-route"></i> Set Paseo Gatuno</span>
-                <a href="/collections/gatos" class="product-title-link">Set Arnés Hipoalergénico + Correa Liviana</a>
+                <a href="/collections/all?pet=cat" class="product-title-link">Set Arnés Hipoalergénico + Correa Liviana</a>
                 <div class="product-rating-stars">★★★★★ <span class="review-count">(67)</span></div>
                 <div class="product-price-row">
                   <span class="current-price">$54.000 COP</span>
@@ -356,16 +446,129 @@
               </div>
             </div>
           </div>
+
+          <!-- 🧸 JUGUETES -->
+          <div class="catalog-product-item" data-pet-type="dog" data-category="juguetes" data-price="32000" data-rating="5" data-title="Pelota Kong Resistente Rellenable Premium">
+            <div class="product-card">
+              <span class="product-badge-tag badge-dog">🐶 PERROS · JUEGO</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=juguetes">
+                  <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80" alt="Pelota Kong Dog" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-shapes"></i> Juguete Interactivo</span>
+                <a href="/collections/all?category=juguetes" class="product-title-link">Pelota Kong Resistente Rellenable Premium</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(143)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$32.000 COP</span>
+                  <span class="old-price">$42.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('pelota-kong-dog', 'Pelota Kong Rellenable 🐶', 32000, 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80', 'Perro')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20la%20Pelota%20Kong%20Rellenable', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="catalog-product-item" data-pet-type="cat" data-category="juguetes" data-price="28000" data-rating="5" data-title="Rascador Torre Sisal con Cuerda y Pelota Colgante">
+            <div class="product-card">
+              <span class="product-badge-tag badge-cat">🐱 GATOS · RASCADOR</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=juguetes">
+                  <img src="https://images.unsplash.com/photo-1518791841217-8f162f1912da?auto=format&fit=crop&w=600&q=80" alt="Rascador Torre Sisal Cat" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-shapes"></i> Rascador Interactivo</span>
+                <a href="/collections/all?category=juguetes" class="product-title-link">Rascador Torre Sisal con Cuerda y Pelota Colgante</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(88)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$28.000 COP</span>
+                  <span class="old-price">$38.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('rascador-sisal-cat', 'Rascador Torre Sisal 🐱', 28000, 'https://images.unsplash.com/photo-1518791841217-8f162f1912da?auto=format&fit=crop&w=300&q=80', 'Gato')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20el%20Rascador%20Torre%20Sisal%20para%20Gatos', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🧴 HIGIENE -->
+          <div class="catalog-product-item" data-pet-type="dog" data-category="higiene" data-price="35000" data-rating="5" data-title="Shampoo Antipulgas Natural Aroma Lavanda">
+            <div class="product-card">
+              <span class="product-badge-tag badge-dog">🐶 PERROS · HIGIENE</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=higiene">
+                  <img src="https://images.unsplash.com/photo-1607923432780-7a9c30adcb73?auto=format&fit=crop&w=600&q=80" alt="Shampoo Antipulgas Dog" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-pump-soap"></i> Higiene Premium</span>
+                <a href="/collections/all?category=higiene" class="product-title-link">Shampoo Antipulgas Natural Aroma Lavanda</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(211)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$35.000 COP</span>
+                  <span class="old-price">$45.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('shampoo-lavanda-dog', 'Shampoo Antipulgas Lavanda 🐶', 35000, 'https://images.unsplash.com/photo-1607923432780-7a9c30adcb73?auto=format&fit=crop&w=300&q=80', 'Perro')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20el%20Shampoo%20Antipulgas%20Lavanda', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="catalog-product-item" data-pet-type="cat" data-category="higiene" data-price="29000" data-rating="5" data-title="Cepillo Limpia-Pelo con Vaciado Automático Gatos">
+            <div class="product-card">
+              <span class="product-badge-tag badge-cat">🐱 GATOS · GROOMING</span>
+              <div class="product-image-wrapper">
+                <a href="/collections/all?category=higiene">
+                  <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Cepillo Gato" class="product-img" loading="lazy">
+                </a>
+              </div>
+              <div class="product-details">
+                <span class="product-category-name"><i class="fa-solid fa-pump-soap"></i> Grooming Felino</span>
+                <a href="/collections/all?category=higiene" class="product-title-link">Cepillo Limpia-Pelo con Vaciado Automático Gatos</a>
+                <div class="product-rating-stars">★★★★★ <span class="review-count">(176)</span></div>
+                <div class="product-price-row">
+                  <span class="current-price">$29.000 COP</span>
+                  <span class="old-price">$39.000 COP</span>
+                </div>
+                <div class="product-card-actions">
+                  <button class="btn-add-cart" onclick="window.addInteractiveCartItem('cepillo-auto-cat', 'Cepillo Vaciado Automático 🐱', 29000, 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80', 'Gato')">
+                    <i class="fa-solid fa-basket-shopping"></i> + Añadir
+                  </button>
+                  <button class="btn-wa-direct" onclick="window.open('https://wa.me/573233056221?text=Hola%20Cuppets!%20Quiero%20el%20Cepillo%20Vaciado%20Automatico%20para%20Gatos', '_blank')" title="Pedir por WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         {% endif %}
       </div>
 
       <div id="catalog-no-results" style="display: none; text-align: center; padding: 60px 20px; background: #FAF9FE; border-radius: var(--radius-lg); margin-top: 20px; border: 1.5px dashed var(--border-color);">
         <i class="fa-solid fa-paw" style="font-size: 2.5rem; color: var(--brand-purple); margin-bottom: 12px; display: block;"></i>
-        <h3 style="color: var(--brand-navy); font-size: 1.25rem; margin-bottom: 6px;">No se encontraron accesorios en esta categoría</h3>
-        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">Prueba seleccionando otra categoría o restablece los filtros.</p>
+        <h3 style="color: var(--brand-navy); font-size: 1.25rem; margin-bottom: 6px;">No se encontraron accesorios en esta selección</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">Prueba seleccionando otra combinación o restablece los filtros.</p>
         <button class="btn btn-purple btn-sm" onclick="resetCatalogFilters()">Ver Todos los Accesorios</button>
       </div>
     </div>
   </div>
 </div>
-

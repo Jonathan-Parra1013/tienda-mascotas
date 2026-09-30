@@ -18,50 +18,61 @@ let activeCategoryFilter = 'all';
 // 1. SPECIES SWITCHER & PET FILTERING (PERROS / GATOS / TODOS)
 // ==========================================
 window.filterByPetType = function(type) {
-  activePetFilter = type;
-
-  // Update switcher buttons across the header & page
-  document.querySelectorAll('.species-switcher .switcher-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-type') === type || btn.textContent.toLowerCase().includes(type === 'dog' ? 'perro' : type === 'cat' ? 'gato' : 'todo'));
-  });
-
   const catalogGrid = document.getElementById('catalog-products-grid');
   if (catalogGrid) {
-    applyCatalogFilters();
-    // Smooth scroll to catalog section if triggered from header
-    const catalogSec = document.getElementById('catalogo-destacado') || document.getElementById('MainContent');
-    if (catalogSec && window.scrollY < 300) {
+    filterCatalogByPet(type);
+    const catalogSec = document.getElementById('catalogo-destacado') || document.getElementById('main-header');
+    if (catalogSec && window.scrollY > 400) {
       catalogSec.scrollIntoView({ behavior: 'smooth' });
     }
   } else {
-    // Navigate to dedicated collection if on another page
-    if (type === 'dog') {
-      window.location.href = '/collections/perros';
-    } else if (type === 'cat') {
-      window.location.href = '/collections/gatos';
-    } else {
-      window.location.href = '/collections/all';
-    }
+    // Navigate to catalog with parameter
+    window.location.href = '/collections/all?pet=' + (type === 'dog' ? 'dog' : type === 'cat' ? 'cat' : 'all');
   }
 };
 
 window.filterCatalogByPet = function(petType, btnElement) {
-  activePetFilter = petType;
+  activePetFilter = petType || 'all';
 
-  // Update tab buttons
-  document.querySelectorAll('.pet-tab-btn, .filter-link-btn').forEach(btn => {
-    if (btn.getAttribute('data-pet') === petType) {
-      btn.classList.add('active');
-    } else if (btn.getAttribute('data-pet')) {
-      btn.classList.remove('active');
+  // 1. Update tab buttons and sidebar links
+  document.querySelectorAll('[data-pet]').forEach(btn => {
+    const p = btn.getAttribute('data-pet');
+    btn.classList.toggle('active', p === activePetFilter);
+  });
+
+  // 2. Sync header species switcher buttons
+  document.querySelectorAll('.species-switcher .switcher-btn').forEach(btn => {
+    const p = btn.getAttribute('data-pet') || btn.getAttribute('data-type');
+    if (p) {
+      btn.classList.toggle('active', p === activePetFilter);
+    } else {
+      const text = btn.textContent.toLowerCase();
+      if (activePetFilter === 'dog') btn.classList.toggle('active', text.includes('perro'));
+      else if (activePetFilter === 'cat') btn.classList.toggle('active', text.includes('gato'));
+      else btn.classList.toggle('active', text.includes('todo'));
     }
   });
 
-  // Sync header switcher buttons
-  document.querySelectorAll('.species-switcher .switcher-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-type') === petType);
-  });
+  // 3. Update Hero Badge & Title if on collection page
+  const heroBadge = document.getElementById('catalog-hero-badge');
+  const heroTitle = document.getElementById('catalog-hero-title');
+  if (heroBadge) {
+    if (activePetFilter === 'dog') {
+      heroBadge.innerHTML = '<i class="fa-solid fa-dog"></i> COLECCIÓN CANINA';
+      if (heroTitle && !heroTitle.getAttribute('data-custom')) heroTitle.textContent = 'Accesorios Exclusivos para Perros';
+    } else if (activePetFilter === 'cat') {
+      heroBadge.innerHTML = '<i class="fa-solid fa-cat"></i> COLECCIÓN FELINA';
+      if (heroTitle && !heroTitle.getAttribute('data-custom')) heroTitle.textContent = 'Accesorios Exclusivos para Gatos';
+    } else {
+      heroBadge.innerHTML = '<i class="fa-solid fa-sparkles"></i> CATÁLOGO OFICIAL';
+      if (heroTitle && !heroTitle.getAttribute('data-custom')) heroTitle.textContent = 'Todos los Accesorios Cuppets';
+    }
+  }
 
+  // 4. Update browser URL without reloading
+  syncFilterUrlParams();
+
+  // 5. Apply filters to product grid
   applyCatalogFilters();
 };
 
@@ -69,19 +80,38 @@ window.filterCatalogByPet = function(petType, btnElement) {
 // 2. CATEGORY SUBFILTER (Arneses / Collares / Correas / Camas)
 // ==========================================
 window.filterCatalogByCategory = function(category, btnElement) {
-  activeCategoryFilter = category;
+  activeCategoryFilter = category || 'all';
 
-  // Update category chip buttons
-  document.querySelectorAll('.subfilter-chip, .filter-link-btn[data-cat]').forEach(chip => {
-    if (chip.getAttribute('data-cat') === category) {
-      chip.classList.add('active');
-    } else if (chip.getAttribute('data-cat')) {
-      chip.classList.remove('active');
-    }
+  // Update category chip and sidebar buttons
+  document.querySelectorAll('[data-cat]').forEach(chip => {
+    chip.classList.toggle('active', chip.getAttribute('data-cat') === activeCategoryFilter);
   });
 
+  // Update URL params
+  syncFilterUrlParams();
+
+  // Apply filters
   applyCatalogFilters();
 };
+
+function syncFilterUrlParams() {
+  if (!window.history || !window.history.replaceState) return;
+  const url = new URL(window.location);
+  
+  if (activePetFilter && activePetFilter !== 'all') {
+    url.searchParams.set('pet', activePetFilter);
+  } else {
+    url.searchParams.delete('pet');
+  }
+
+  if (activeCategoryFilter && activeCategoryFilter !== 'all') {
+    url.searchParams.set('category', activeCategoryFilter);
+  } else {
+    url.searchParams.delete('category');
+  }
+
+  window.history.replaceState({}, '', url.toString());
+}
 
 function applyCatalogFilters() {
   const items = document.querySelectorAll('.catalog-product-item');
@@ -89,18 +119,138 @@ function applyCatalogFilters() {
   let visibleCount = 0;
 
   items.forEach(item => {
-    const itemPet = item.getAttribute('data-pet-type') || 'all';
-    const itemCat = item.getAttribute('data-category') || 'all';
+    const itemPet = (item.getAttribute('data-pet-type') || 'all').toLowerCase();
+    const itemCat = (item.getAttribute('data-category') || 'all').toLowerCase();
+    const itemTitle = (item.getAttribute('data-title') || item.innerText || '').toLowerCase();
 
-    const matchesPet = (activePetFilter === 'all' || itemPet === activePetFilter || itemPet === 'all');
-    const matchesCat = (activeCategoryFilter === 'all' || itemCat.includes(activeCategoryFilter) || itemCat === 'all');
+    // Pet matching logic
+    let matchesPet = false;
+    if (activePetFilter === 'all') {
+      matchesPet = true;
+    } else if (activePetFilter === 'dog') {
+      matchesPet = (
+        itemPet === 'dog' || 
+        itemPet === 'both' || 
+        itemTitle.includes('perro') || 
+        itemTitle.includes('canin') || 
+        itemTitle.includes('dog') ||
+        itemTitle.includes('cachorro')
+      );
+    } else if (activePetFilter === 'cat') {
+      matchesPet = (
+        itemPet === 'cat' || 
+        itemPet === 'both' || 
+        itemTitle.includes('gato') || 
+        itemTitle.includes('felin') || 
+        (itemTitle.includes('cat') && !itemTitle.includes('accesorios')) || 
+        itemTitle.includes('michi') ||
+        itemTitle.includes('minino')
+      );
+    }
+
+    // Category matching logic
+    let matchesCat = false;
+    if (activeCategoryFilter === 'all') {
+      matchesCat = true;
+    } else if (activeCategoryFilter === 'arneses') {
+      matchesCat = (
+        itemCat === 'arneses' || 
+        itemCat.includes('arnes') || 
+        itemCat.includes('pecher') ||
+        itemTitle.includes('arnés') || 
+        itemTitle.includes('arnes') || 
+        itemTitle.includes('pechera')
+      );
+    } else if (activeCategoryFilter === 'collares') {
+      const isDentalOrHygiene = itemTitle.includes('dient') || itemTitle.includes('dental') || itemTitle.includes('cepillo') || itemTitle.includes('sarro') || itemTitle.includes('shampoo') || itemTitle.includes('limpia') || itemTitle.includes('baño') || itemTitle.includes('higiene');
+      matchesCat = !isDentalOrHygiene && (
+        itemCat === 'collares' || 
+        itemCat.includes('collar') || 
+        (itemCat.includes('placa') && !itemCat.includes('dental')) ||
+        itemTitle.includes('collar') || 
+        itemTitle.includes('chapa') ||
+        itemTitle.includes('medalla') ||
+        (itemTitle.includes('placa') && !itemTitle.includes('dental') && !itemTitle.includes('bacterian') && !itemTitle.includes('sarro') && !itemTitle.includes('diente'))
+      );
+    } else if (activeCategoryFilter === 'correas') {
+      matchesCat = (
+        itemCat === 'correas' || 
+        itemCat.includes('correa') || 
+        itemCat.includes('paseo') ||
+        itemCat.includes('lazo') ||
+        itemTitle.includes('correa') || 
+        itemTitle.includes('paseo')
+      );
+    } else if (activeCategoryFilter === 'camas') {
+      matchesCat = (
+        itemCat === 'camas' || 
+        itemCat.includes('cama') || 
+        itemCat.includes('cueva') || 
+        itemCat.includes('iglu') || 
+        itemCat.includes('descanso') ||
+        itemTitle.includes('cama') || 
+        itemTitle.includes('cueva') || 
+        itemTitle.includes('iglú') || 
+        itemTitle.includes('iglu') || 
+        itemTitle.includes('descanso') || 
+        itemTitle.includes('colchón') ||
+        itemTitle.includes('colchon')
+      );
+    } else if (activeCategoryFilter === 'juguetes') {
+      matchesCat = (
+        itemCat === 'juguetes' || 
+        itemCat.includes('juguet') ||
+        itemTitle.includes('juguet') || 
+        itemTitle.includes('pelota') || 
+        itemTitle.includes('cuerda') || 
+        itemTitle.includes('rascador') || 
+        itemTitle.includes('interactiv') ||
+        itemTitle.includes('peluche') ||
+        itemTitle.includes('mordedor')
+      );
+    } else if (activeCategoryFilter === 'higiene') {
+      matchesCat = (
+        itemCat === 'higiene' || 
+        itemCat.includes('higien') ||
+        itemTitle.includes('shampoo') || 
+        itemTitle.includes('cepillo') || 
+        itemTitle.includes('dient') ||
+        itemTitle.includes('dental') ||
+        itemTitle.includes('sarro') ||
+        itemTitle.includes('pasta') ||
+        itemTitle.includes('higien') || 
+        itemTitle.includes('limpia') ||
+        itemTitle.includes('grooming') ||
+        itemTitle.includes('cortaun') ||
+        itemTitle.includes('peine') ||
+        itemTitle.includes('deslanad') ||
+        itemTitle.includes('baño') ||
+        itemTitle.includes('jabon')
+      );
+    } else if (activeCategoryFilter === 'promociones') {
+      matchesCat = (
+        itemCat === 'promociones' || 
+        itemCat.includes('promo') ||
+        itemTitle.includes('combo') || 
+        itemTitle.includes('kit ') || 
+        itemTitle.includes('set ') || 
+        itemTitle.includes('pack') ||
+        itemTitle.includes('promo') ||
+        itemTitle.includes('descuento')
+      );
+    } else {
+      matchesCat = (itemCat === activeCategoryFilter || itemCat.includes(activeCategoryFilter));
+    }
 
     if (matchesPet && matchesCat) {
       item.style.display = 'block';
-      item.style.animation = 'fadeInProduct 0.35s ease forwards';
+      item.style.opacity = '1';
+      item.style.visibility = 'visible';
       visibleCount++;
     } else {
       item.style.display = 'none';
+      item.style.opacity = '0';
+      item.style.visibility = 'hidden';
     }
   });
 
@@ -118,15 +268,29 @@ window.resetCatalogFilters = function() {
   activePetFilter = 'all';
   activeCategoryFilter = 'all';
 
-  document.querySelectorAll('.pet-tab-btn, .subfilter-chip, .filter-link-btn').forEach(btn => {
-    if (btn.getAttribute('data-pet') === 'all' || btn.getAttribute('data-cat') === 'all') {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+  document.querySelectorAll('[data-pet]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-pet') === 'all');
   });
 
+  document.querySelectorAll('[data-cat]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === 'all');
+  });
+
+  document.querySelectorAll('.species-switcher .switcher-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-type') === 'all' || btn.getAttribute('data-pet') === 'all');
+  });
+
+  const sortSelect = document.getElementById('catalog-sort-select');
+  if (sortSelect) sortSelect.value = 'featured';
+
+  const heroBadge = document.getElementById('catalog-hero-badge');
+  const heroTitle = document.getElementById('catalog-hero-title');
+  if (heroBadge) heroBadge.innerHTML = '<i class="fa-solid fa-sparkles"></i> CATÁLOGO OFICIAL';
+  if (heroTitle) heroTitle.textContent = 'Todos los Accesorios Cuppets';
+
+  syncFilterUrlParams();
   applyCatalogFilters();
+
   if (window.showToast) window.showToast('Filtros restablecidos 🐾', 'info');
 };
 
@@ -137,9 +301,11 @@ function updateCategoryCounters() {
 
   document.querySelectorAll('.catalog-product-item').forEach(item => {
     countAll++;
-    const pet = item.getAttribute('data-pet-type');
-    if (pet === 'dog') countDog++;
-    if (pet === 'cat') countCat++;
+    const pet = (item.getAttribute('data-pet-type') || '').toLowerCase();
+    const title = (item.getAttribute('data-title') || item.innerText || '').toLowerCase();
+
+    if (pet === 'dog' || pet === 'both' || title.includes('perro') || title.includes('canin') || title.includes('dog')) countDog++;
+    if (pet === 'cat' || pet === 'both' || title.includes('gato') || title.includes('felin') || title.includes('cat')) countCat++;
   });
 
   const elAll = document.getElementById('count-all');
@@ -152,20 +318,82 @@ function updateCategoryCounters() {
 }
 
 function checkUrlFilterParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const petParam = urlParams.get('pet') || urlParams.get('specie') || urlParams.get('tipo');
+  const catParam = urlParams.get('category') || urlParams.get('categoria') || urlParams.get('cat');
   const path = window.location.pathname.toLowerCase();
-  if (path.includes('perro')) {
-    filterCatalogByPet('dog');
+
+  let targetPet = 'all';
+  let targetCat = 'all';
+
+  if (petParam) {
+    const p = petParam.toLowerCase();
+    if (p.includes('dog') || p.includes('perro')) targetPet = 'dog';
+    else if (p.includes('cat') || p.includes('gato')) targetPet = 'cat';
+  } else if (path.includes('perro')) {
+    targetPet = 'dog';
   } else if (path.includes('gato')) {
-    filterCatalogByPet('cat');
-  } else if (path.includes('arnes')) {
-    filterCatalogByCategory('arneses');
-  } else if (path.includes('collar')) {
-    filterCatalogByCategory('collares');
-  } else if (path.includes('correa')) {
-    filterCatalogByCategory('correas');
-  } else if (path.includes('cama')) {
-    filterCatalogByCategory('camas');
+    targetPet = 'cat';
   }
+
+  if (catParam) {
+    const c = catParam.toLowerCase();
+    if (c.includes('higien') || c.includes('shampoo') || c.includes('cepillo') || c.includes('dental') || c.includes('dient') || c.includes('diente')) targetCat = 'higiene';
+    else if (c.includes('arnes') || c.includes('pecher')) targetCat = 'arneses';
+    else if (c.includes('collar') || (c.includes('placa') && !c.includes('dental'))) targetCat = 'collares';
+    else if (c.includes('correa') || c.includes('paseo')) targetCat = 'correas';
+    else if (c.includes('cama') || c.includes('cueva') || c.includes('descanso')) targetCat = 'camas';
+    else if (c.includes('juguet') || c.includes('pelota') || c.includes('rascador')) targetCat = 'juguetes';
+    else if (c.includes('promo') || c.includes('combo') || c.includes('kit')) targetCat = 'promociones';
+    else targetCat = c;
+  } else if (path.includes('arnes')) {
+    targetCat = 'arneses';
+  } else if (path.includes('collar')) {
+    targetCat = 'collares';
+  } else if (path.includes('correa')) {
+    targetCat = 'correas';
+  } else if (path.includes('cama')) {
+    targetCat = 'camas';
+  } else if (path.includes('juguet')) {
+    targetCat = 'juguetes';
+  } else if (path.includes('higien') || path.includes('cepillo') || path.includes('dental')) {
+    targetCat = 'higiene';
+  } else if (path.includes('promo')) {
+    targetCat = 'promociones';
+  }
+
+  if (targetPet !== 'all') {
+    activePetFilter = targetPet;
+  }
+  if (targetCat !== 'all') {
+    activeCategoryFilter = targetCat;
+  }
+
+  // Update UI buttons matching initial state
+  document.querySelectorAll('[data-pet]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-pet') === activePetFilter);
+  });
+  document.querySelectorAll('[data-cat]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === activeCategoryFilter);
+  });
+  document.querySelectorAll('.species-switcher .switcher-btn').forEach(btn => {
+    const p = btn.getAttribute('data-pet') || btn.getAttribute('data-type');
+    if (p) btn.classList.toggle('active', p === activePetFilter);
+  });
+
+  const heroBadge = document.getElementById('catalog-hero-badge');
+  const heroTitle = document.getElementById('catalog-hero-title');
+  if (heroBadge && activePetFilter !== 'all') {
+    if (activePetFilter === 'dog') {
+      heroBadge.innerHTML = '<i class="fa-solid fa-dog"></i> COLECCIÓN CANINA';
+      if (heroTitle) heroTitle.textContent = 'Accesorios Exclusivos para Perros';
+    } else if (activePetFilter === 'cat') {
+      heroBadge.innerHTML = '<i class="fa-solid fa-cat"></i> COLECCIÓN FELINA';
+      if (heroTitle) heroTitle.textContent = 'Accesorios Exclusivos para Gatos';
+    }
+  }
+
+  applyCatalogFilters();
 }
 
 // ==========================================
@@ -178,10 +406,20 @@ window.sortCatalogProducts = function(sortBy) {
   const items = Array.from(grid.querySelectorAll('.catalog-product-item'));
 
   items.sort((a, b) => {
-    const priceA = parseFloat(a.getAttribute('data-price') || 50000);
-    const priceB = parseFloat(b.getAttribute('data-price') || 50000);
-    const ratingA = parseFloat(a.getAttribute('data-rating') || 5);
-    const ratingB = parseFloat(b.getAttribute('data-rating') || 5);
+    let priceA = parseFloat(a.getAttribute('data-price')) || 0;
+    let priceB = parseFloat(b.getAttribute('data-price')) || 0;
+
+    if (!priceA) {
+      const priceTxtA = a.querySelector('.current-price')?.textContent || '';
+      priceA = parseFloat(priceTxtA.replace(/[^0-9]/g, '')) || 0;
+    }
+    if (!priceB) {
+      const priceTxtB = b.querySelector('.current-price')?.textContent || '';
+      priceB = parseFloat(priceTxtB.replace(/[^0-9]/g, '')) || 0;
+    }
+
+    const ratingA = parseFloat(a.getAttribute('data-rating')) || 5;
+    const ratingB = parseFloat(b.getAttribute('data-rating')) || 5;
 
     if (sortBy === 'price-asc') return priceA - priceB;
     if (sortBy === 'price-desc') return priceB - priceA;

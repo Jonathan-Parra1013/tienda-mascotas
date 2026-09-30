@@ -60,32 +60,46 @@
         <h4 class="footer-heading-underlined">Catálogo</h4>
         <ul class="footer-links-list">
           <li><a href="/collections/all"><i class="fa-solid fa-border-all" style="color: var(--brand-purple); font-size:0.75rem;"></i> Catálogo Completo</a></li>
-          <li><a href="/collections/collares"><i class="fa-solid fa-tag" style="color: var(--brand-honey); font-size:0.75rem;"></i> Collares &amp; Pecheras</a></li>
-          <li><a href="/collections/arneses"><i class="fa-solid fa-vest" style="color: var(--brand-honey); font-size:0.75rem;"></i> Arneses Ergonómicos</a></li>
-          <li><a href="/collections/correas"><i class="fa-solid fa-link" style="color: var(--brand-honey); font-size:0.75rem;"></i> Correas de Paseo</a></li>
-          <li><a href="/collections/camas"><i class="fa-solid fa-bed" style="color: var(--brand-honey); font-size:0.75rem;"></i> Camas &amp; Descanso</a></li>
+          <li><a href="/collections/all?category=collares"><i class="fa-solid fa-tag" style="color: var(--brand-honey); font-size:0.75rem;"></i> Collares &amp; Pecheras</a></li>
+          <li><a href="/collections/all?category=arneses"><i class="fa-solid fa-vest" style="color: var(--brand-honey); font-size:0.75rem;"></i> Arneses Ergonómicos</a></li>
+          <li><a href="/collections/all?category=correas"><i class="fa-solid fa-link" style="color: var(--brand-honey); font-size:0.75rem;"></i> Correas de Paseo</a></li>
+          <li><a href="/collections/all?category=camas"><i class="fa-solid fa-bed" style="color: var(--brand-honey); font-size:0.75rem;"></i> Camas &amp; Descanso</a></li>
           <li><a href="/account"><i class="fa-regular fa-user" style="color: var(--brand-purple); font-size:0.75rem;"></i> Mi Cuenta / Pedidos</a></li>
         </ul>
       </div>
 
       <!-- Col 3: Contacto & Atención -->
       <div class="footer-col">
-        <h4 class="footer-heading-underlined">Contacto</h4>
+        <h4 class="footer-heading-underlined">Contacto &amp; Soporte</h4>
         <div class="footer-contact-items">
-          <div class="contact-card-row">
-            <div class="contact-card-icon"><i class="fa-brands fa-whatsapp"></i></div>
-            <div>
-              <span class="contact-card-label">WhatsApp Oficial</span>
-              <a href="https://wa.me/{{ settings.whatsapp_number | default: '573233056221' }}" target="_blank" class="contact-card-val text-accent-green" style="display:block;">+57 323 305 6221</a>
-            </div>
-          </div>
+          
           <div class="contact-card-row">
             <div class="contact-card-icon"><i class="fa-regular fa-envelope"></i></div>
             <div>
-              <span class="contact-card-label">Correo Electrónico</span>
+              <span class="contact-card-label">Correo Oficial</span>
               <a href="mailto:cuppets369@gmail.com" class="contact-card-val" style="display:block; color: white;">cuppets369@gmail.com</a>
+              <span style="font-size: 0.76rem; color: #94A3B8; font-family: monospace;">Cuppets369sebas$</span>
             </div>
           </div>
+
+          <div class="contact-card-row">
+            <div class="contact-card-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>
+              <span class="contact-card-label">WhatsApp / Atención 1</span>
+              <a href="https://wa.me/573233056221" target="_blank" class="contact-card-val text-accent-green" style="display:block;">+57 323 305 6221</a>
+              <a href="mailto:Dss1712sebas@gmail.com" class="contact-card-val" style="display:block; font-size: 0.8rem; color: #94A3B8;">Dss1712sebas@gmail.com</a>
+            </div>
+          </div>
+
+          <div class="contact-card-row">
+            <div class="contact-card-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <span class="contact-card-label">Línea Móvil / Atención 2</span>
+              <a href="tel:3023661803" class="contact-card-val" style="display:block; color: white;">302 366 1803</a>
+              <a href="mailto:juanseguz18@gmail.com" class="contact-card-val" style="display:block; font-size: 0.8rem; color: #94A3B8;">juanseguz18@gmail.com</a>
+            </div>
+          </div>
+
           <div class="contact-card-row">
             <div class="contact-card-icon"><i class="fa-solid fa-truck-fast"></i></div>
             <div>

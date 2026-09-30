@@ -48,21 +48,33 @@
     <div class="container nav-container">
       <ul class="nav-menu" id="nav-menu">
         <li class="nav-item"><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Inicio</a></li>
-        <li class="nav-item"><a href="/collections/all" class="nav-link {% if request.path contains '/collections/all' %}active{% endif %}">Catálogo Completo</a></li>
-        <li class="nav-item"><a href="/collections/perros" class="nav-link"><i class="fa-solid fa-dog" style="color: var(--brand-honey);"></i> Perros</a></li>
-        <li class="nav-item"><a href="/collections/gatos" class="nav-link"><i class="fa-solid fa-cat" style="color: var(--brand-purple);"></i> Gatos</a></li>
+        <li class="nav-item"><a href="/collections/all" class="nav-link {% if request.path contains '/collections/all' %}active{% endif %}">Catálogo</a></li>
+        <li class="nav-item"><a href="/collections/all?pet=dog" class="nav-link"><i class="fa-solid fa-dog" style="color: var(--brand-honey);"></i> Perros</a></li>
+        <li class="nav-item"><a href="/collections/all?pet=cat" class="nav-link"><i class="fa-solid fa-cat" style="color: var(--brand-purple);"></i> Gatos</a></li>
+
+        <!-- Categorías Dropdown -->
         <li class="nav-item dropdown">
-          <a href="/collections/collares-y-correas" class="nav-link">
+          <a href="/collections/all" class="nav-link">
             Categorías <i class="fa-solid fa-chevron-down arrow-icon" style="font-size:0.75rem; opacity:0.7;"></i>
           </a>
           <div class="dropdown-content">
-            <a href="/collections/collares">Collares y Pecheras</a>
-            <a href="/collections/arneses">Arneses Ergonómicos</a>
-            <a href="/collections/correas">Correas de Paseo</a>
-            <a href="/collections/camas">Camas y Descanso</a>
+            <a href="/collections/all?category=arneses"><i class="fa-solid fa-vest" style="color:var(--brand-purple);"></i> Arneses & Pecheras</a>
+            <a href="/collections/all?category=collares"><i class="fa-solid fa-tag" style="color:var(--brand-honey);"></i> Collares & Placas</a>
+            <a href="/collections/all?category=correas"><i class="fa-solid fa-route" style="color:var(--brand-purple);"></i> Correas de Paseo</a>
+            <a href="/collections/all?category=camas"><i class="fa-solid fa-bed" style="color:var(--brand-honey);"></i> Camas & Descanso</a>
+            <a href="/collections/all?category=juguetes"><i class="fa-solid fa-shapes" style="color:var(--brand-purple);"></i> Juguetes & Entretenimiento</a>
+            <a href="/collections/all?category=higiene"><i class="fa-solid fa-pump-soap" style="color:var(--brand-honey);"></i> Higiene & Cuidado</a>
           </div>
         </li>
-        <li class="nav-item"><a href="/pages/sobre-nosotros" class="nav-link">Sobre Nosotros</a></li>
+
+        <!-- Promociones -->
+        <li class="nav-item">
+          <a href="/collections/all?category=promociones" class="nav-link nav-link-promo">
+            <i class="fa-solid fa-tags" style="color:#fff;"></i> Promociones
+          </a>
+        </li>
+
+        <li class="nav-item"><a href="/#sobre-nosotros" class="nav-link">Sobre Nosotros</a></li>
       </ul>
     </div>
   </nav>
