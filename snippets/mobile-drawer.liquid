@@ -1,0 +1,78 @@
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop" onclick="closeMobileDrawer()"></div>
+
+<div class="mobile-drawer" id="mobile-drawer">
+  <!-- Header -->
+  <div class="mobile-drawer-header">
+    <a href="/" class="brand-logo" aria-label="Cuppets - Inicio" onclick="closeMobileDrawer()">
+      <img src="{{ 'cuppets-logo.png' | asset_url }}" alt="Cuppets Logo" class="brand-logo-img" style="height: 52px; width: auto;">
+      <div class="logo-text-box">
+        <div class="brand-title-split" style="font-size: 1.6rem;">
+          <span class="cup">Cup</span><span class="pets">pets</span>
+        </div>
+      </div>
+    </a>
+    <button class="mobile-drawer-close" onclick="closeMobileDrawer()" aria-label="Cerrar menú">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Species Quick Selection -->
+  <div class="mobile-drawer-section">
+    <span class="mobile-drawer-section-label"><i class="fa-solid fa-paw"></i> ¿A QUIÉN CONSENTIMOS HOY?</span>
+    <div class="mobile-species-grid">
+      <a href="/collections/all?pet=dog" class="mobile-species-btn dog" onclick="closeMobileDrawer()">
+        <i class="fa-solid fa-dog"></i>
+        <span>Perros</span>
+      </a>
+      <a href="/collections/all?pet=cat" class="mobile-species-btn cat" onclick="closeMobileDrawer()">
+        <i class="fa-solid fa-cat"></i>
+        <span>Gatos</span>
+      </a>
+      <a href="/collections/all" class="mobile-species-btn all" onclick="closeMobileDrawer()">
+        <i class="fa-solid fa-border-all"></i>
+        <span>Todos</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="mobile-drawer-section">
+    <span class="mobile-drawer-section-label"><i class="fa-solid fa-compass"></i> EXPLORAR TIENDA</span>
+    <ul class="mobile-nav-list">
+      <li><a href="/" onclick="closeMobileDrawer()"><i class="fa-solid fa-house"></i> Inicio</a></li>
+      <li><a href="/collections/all" onclick="closeMobileDrawer()"><i class="fa-solid fa-border-all"></i> Catálogo Completo</a></li>
+      <li><a href="/collections/all?category=arneses" onclick="closeMobileDrawer()"><i class="fa-solid fa-vest"></i> Arneses &amp; Pecheras</a></li>
+      <li><a href="/collections/all?category=collares" onclick="closeMobileDrawer()"><i class="fa-solid fa-tag"></i> Collares &amp; Placas</a></li>
+      <li><a href="/collections/all?category=correas" onclick="closeMobileDrawer()"><i class="fa-solid fa-route"></i> Correas de Paseo</a></li>
+      <li><a href="/collections/all?category=camas" onclick="closeMobileDrawer()"><i class="fa-solid fa-bed"></i> Camas &amp; Descanso</a></li>
+      <li><a href="/collections/all?category=juguetes" onclick="closeMobileDrawer()"><i class="fa-solid fa-shapes"></i> Juguetes</a></li>
+      <li><a href="/collections/all?category=higiene" onclick="closeMobileDrawer()"><i class="fa-solid fa-pump-soap"></i> Higiene &amp; Cuidado</a></li>
+      <li><a href="/collections/all?category=promociones" onclick="closeMobileDrawer()" style="color: var(--brand-purple); font-weight: 700;"><i class="fa-solid fa-tags" style="color: var(--brand-honey);"></i> Promociones Especiales</a></li>
+      <li><a href="/#sobre-nosotros" onclick="closeMobileDrawer()"><i class="fa-solid fa-shield-heart"></i> Sobre Nosotros</a></li>
+    </ul>
+  </div>
+
+  <!-- Account & Cart Actions -->
+  <div class="mobile-drawer-section">
+    <div class="mobile-account-actions">
+      <button class="mobile-account-btn" onclick="closeMobileDrawer(); openAccountDrawer();">
+        <i class="fa-regular fa-user"></i>
+        <span>{% if customer %}Hola, {{ customer.first_name }}{% else %}Mi Cuenta / Iniciar Sesión{% endif %}</span>
+      </button>
+      <button class="mobile-cart-btn" onclick="closeMobileDrawer(); toggleCartDrawer();">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span>Ver Mi Canasta</span>
+        <span class="mobile-cart-badge" id="mobile-cart-badge">{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- WhatsApp VIP Advisor CTA -->
+  <div class="mobile-drawer-wa">
+    <a href="https://wa.me/{{ settings.whatsapp_number | default: '573233056221' }}?text=Hola%20Cuppets!%20Tengo%20una%20consulta%20sobre%20sus%20accesorios" target="_blank" class="mobile-wa-btn">
+      <i class="fa-brands fa-whatsapp"></i>
+      <span>Asesor VIP por WhatsApp</span>
+    </a>
+  </div>
+</div>

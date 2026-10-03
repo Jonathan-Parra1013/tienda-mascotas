@@ -7,6 +7,9 @@
   <meta name="theme-color" content="#5C3BFF">
 
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="icon" type="image/png" href="{{ 'cuppets-logo.png' | asset_url }}">
+  <link rel="shortcut icon" type="image/png" href="{{ 'cuppets-logo.png' | asset_url }}">
+  <link rel="apple-touch-icon" href="{{ 'cuppets-logo.png' | asset_url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -41,6 +44,7 @@
   {% section 'footer' %}
 
   <!-- Global Drawers & Modals -->
+  {% render 'mobile-drawer' %}
   {% render 'cart-drawer' %}
   {% render 'search-modal' %}
   {% render 'account-drawer' %}
